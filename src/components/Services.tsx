@@ -1,23 +1,6 @@
-import { useState, useRef } from 'react';
-import { useScroll, motion, useTransform, useMotionValueEvent, AnimatePresence } from 'motion/react';
-import {
-  Sparkles,
-  Terminal,
-  Activity,
-  ArrowUpRight,
-  Cloud,
-  Layers,
-  Cpu,
-  Server,
-  Database,
-  Bot,
-  ShieldCheck,
-  Zap,
-  Lock,
-  GitBranch,
-  Search,
-  Workflow
-} from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Activity, Bot, Cloud, Database, Layers, Server, Zap } from 'lucide-react';
 
 interface ServiceItem {
   id: string;
@@ -133,43 +116,68 @@ interface ServicesProps {
 }
 
 export function Services({ onContactClick }: ServicesProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end'],
-  });
+  // Track the active service off live geometry rather than a cached scroll
+  // measurement: the hero above this section changes height as its portrait and
+  // fonts load, which leaves any measurement taken at mount permanently skewed.
+  useEffect(() => {
+    let frame = 0;
 
-  // Calculate active index based on scroll progress through the sticky track (6 services)
-  useMotionValueEvent(scrollYProgress, 'change', (latest) => {
-    const clamped = Math.min(Math.max(latest, 0), 0.999);
-    const newIndex = Math.floor(clamped * SERVICES.length);
-    if (newIndex !== activeIndex) {
-      setActiveIndex(newIndex);
-    }
-  });
+    const measure = () => {
+      frame = 0;
+      const el = containerRef.current;
+      if (!el) return;
+
+      const scrollable = el.offsetHeight - window.innerHeight;
+      if (scrollable <= 0) return;
+
+      // rect.top is 0 when the track starts and -scrollable when it ends.
+      const progress = -el.getBoundingClientRect().top / scrollable;
+      const next = Math.min(
+        SERVICES.length - 1,
+        Math.max(0, Math.floor(progress * SERVICES.length))
+      );
+
+      setActiveIndex((current) => (current === next ? current : next));
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(measure);
+    };
+
+    measure();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
 
   const currentService = SERVICES[activeIndex];
 
-  const scrollToService = (index: number) => {
-    if (!containerRef.current) return;
-    const containerTop = containerRef.current.offsetTop;
-    const containerHeight = containerRef.current.offsetHeight;
-    const stepHeight = containerHeight / SERVICES.length;
-    const targetScroll = containerTop + stepHeight * index + 40;
+  const scrollToService = useCallback((index: number) => {
+    const el = containerRef.current;
+    if (!el) return;
 
-    window.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth',
-    });
-  };
+    const top = el.getBoundingClientRect().top + window.scrollY;
+    const stepHeight = (el.offsetHeight - window.innerHeight) / SERVICES.length;
+    // Land mid-step so the target index is unambiguous.
+    const targetScroll = top + stepHeight * (index + 0.5);
+
+    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+  }, []);
 
   return (
     <section
       ref={containerRef}
       id="services"
-      className="relative h-[480vh] bg-[#030407] text-[#e4e4e7]"
+      className="relative h-[700vh] bg-[#030407] text-[#e4e4e7]"
     >
       {/* Sticky Fullscreen Presentation Frame */}
       <div className="sticky top-0 h-screen w-full flex flex-col justify-between overflow-hidden px-6 sm:px-10 md:px-16 lg:px-24 py-8 sm:py-12 select-none">
@@ -231,7 +239,7 @@ export function Services({ onContactClick }: ServicesProps) {
                   initial={{ opacity: 0, scale: 0.96, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                   className="relative z-10 h-full flex flex-col justify-between"
                 >
                   {/* Top Mockup Toolbar Header */}
@@ -459,7 +467,7 @@ export function Services({ onContactClick }: ServicesProps) {
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
                             <span className="text-[10px] text-zinc-500 block uppercase font-sans">Accuracy</span>
-                            <span className="text-emerald-400 font-semibold">Grounded (Zero Hallucination)</span>
+                            <span className="text-emerald-400 font-semibold">Grounded / Cited</span>
                           </div>
                         </div>
                       </div>
@@ -483,14 +491,14 @@ export function Services({ onContactClick }: ServicesProps) {
           <div className="lg:col-span-6 flex flex-col justify-center">
             
             {/* Dynamic Service Text with AnimatePresence mode="wait" to eliminate ghosting/overlap */}
-            <div className="min-h-[300px] sm:min-h-[330px] flex flex-col justify-center">
+            <div className="min-h-[260px] sm:min-h-[320px] md:min-h-[330px] flex flex-col justify-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentService.id}
                   initial={{ opacity: 0, y: 16, filter: 'blur(3px)' }}
                   animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
                   exit={{ opacity: 0, y: -16, filter: 'blur(3px)' }}
-                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                   className="space-y-4"
                 >
                   {/* Service Title (Clean, bold, prominent) */}
@@ -547,7 +555,8 @@ export function Services({ onContactClick }: ServicesProps) {
               {/* Step Navigation Dots for all 6 services */}
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-mono text-zinc-500 mr-2">
-                  0{activeIndex + 1} / 0{SERVICES.length}
+                  {String(activeIndex + 1).padStart(2, '0')} /{' '}
+                  {String(SERVICES.length).padStart(2, '0')}
                 </span>
                 {SERVICES.map((s, idx) => (
                   <button
@@ -555,6 +564,7 @@ export function Services({ onContactClick }: ServicesProps) {
                     onClick={() => scrollToService(idx)}
                     className="group p-1 cursor-pointer"
                     aria-label={`Jump to ${s.title}`}
+                    aria-current={idx === activeIndex ? 'step' : undefined}
                   >
                     <div
                       className={`h-1.5 rounded-full transition-all duration-300 ${
