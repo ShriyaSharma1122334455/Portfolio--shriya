@@ -1,0 +1,53 @@
+import { useState } from 'react';
+import { CustomCursor } from './components/Hero/CustomCursor';
+import { Navbar } from './components/Navbar';
+import { Hero } from './components/Hero/Hero';
+import { Services } from './components/Services';
+import { About } from './components/About';
+import { Experience } from './components/Experience';
+import { Projects } from './components/Projects';
+import { Skills } from './components/Skills';
+import { Education } from './components/Education';
+import { Contact } from './components/Contact';
+import { Footer } from './components/Footer';
+import { ContactModal } from './components/ContactModal';
+
+export default function App() {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-[#070708] text-[#f4f4f5] selection:bg-white selection:text-black">
+      {/* Desktop-only inertial Custom Cursor */}
+      <CustomCursor />
+
+      {/* Navigation */}
+      <Navbar onContactClick={() => setIsContactModalOpen(true)} />
+
+      {/* Main Sections */}
+      <main>
+        {/* Editorial Interactive Hero Section */}
+        <Hero onContactClick={() => setIsContactModalOpen(true)} />
+
+        {/* Scroll-Driven Sticky Services Section */}
+        <Services onContactClick={() => setIsContactModalOpen(true)} />
+
+        {/* Supporting Portfolio Sections */}
+        <About />
+        <Experience />
+        <Projects />
+        <Skills />
+        <Education />
+        <Contact />
+      </main>
+
+      {/* Minimal Footer */}
+      <Footer />
+
+      {/* Contact Modal */}
+      <ContactModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
+    </div>
+  );
+}
