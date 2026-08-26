@@ -9,14 +9,19 @@ import { useEffect, useState, type RefObject } from "react";
  * out, the section un-pins on its own and the page continues to the next one.
  * No wheel hijacking, so trackpads, touch and keyboard all behave normally.
  *
- * @param sectionRef the tall outer section
- * @param trackRef   the horizontal strip living inside the sticky child
- * @param enabled    false falls back to a natively scrollable track
+ * @param sectionRef   the tall outer section
+ * @param trackRef     the horizontal strip living inside the sticky child
+ * @param enabled      false falls back to a natively scrollable track
+ * @param scrollFactor vertical scroll needed per pixel of horizontal travel.
+ *                     1 is 1:1. Below 1 shortens the pinned stretch and moves
+ *                     the track faster, so a long rail does not hold the reader
+ *                     captive for screens on end.
  */
 export function usePinnedTrack(
   sectionRef: RefObject<HTMLElement | null>,
   trackRef: RefObject<HTMLElement | null>,
   enabled = true,
+  scrollFactor = 1,
 ) {
   /** Horizontal pixels the track must travel to reveal its far edge. */
   const [distance, setDistance] = useState(0);
@@ -96,6 +101,8 @@ export function usePinnedTrack(
     /** Current horizontal offset in px (negative = travelled). */
     offset: -progress * distance,
     /** Height the section needs so the pin lasts exactly as long as the track. */
-    sectionHeight: enabled ? `calc(100vh + ${distance}px)` : "auto",
+    sectionHeight: enabled
+      ? `calc(100vh + ${Math.round(distance * scrollFactor)}px)`
+      : "auto",
   };
 }

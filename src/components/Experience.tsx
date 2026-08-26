@@ -172,6 +172,7 @@ export function Experience() {
 
   const [reducedMotion, setReducedMotion] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [cardWidth, setCardWidth] = useState(440);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -181,11 +182,30 @@ export function Experience() {
     return () => query.removeEventListener("change", onChange);
   }, []);
 
+  // Card width lives in JS because the track's end padding is derived from it.
+  useEffect(() => {
+    const pick = () => {
+      const w = window.innerWidth;
+      setCardWidth(w < 640 ? Math.round(w * 0.78) : w < 1024 ? 420 : 440);
+    };
+    pick();
+    window.addEventListener("resize", pick);
+    return () => window.removeEventListener("resize", pick);
+  }, []);
+
   const { distance, progress, offset, sectionHeight } = usePinnedTrack(
     sectionRef,
     trackRef,
     !reducedMotion,
+    0.85,
   );
+
+  /**
+   * Half a viewport minus half a card. Without this the first and last cards
+   * can never reach the middle of the stage — the last one used to stop ~150px
+   * short and stay dimmed, so the final entry never came into focus.
+   */
+  const endPadding = `calc(50vw - ${cardWidth / 2}px)`;
 
   // Whichever card sits nearest the middle of the viewport is the focused one.
   useEffect(() => {
@@ -296,8 +316,10 @@ export function Experience() {
         >
           <div
             ref={trackRef}
-            className="relative flex items-stretch gap-8 sm:gap-14 w-max px-[8vw] sm:px-[14vw] py-4"
+            className="relative flex items-stretch gap-8 sm:gap-14 w-max py-4"
             style={{
+              paddingLeft: endPadding,
+              paddingRight: endPadding,
               transform: reducedMotion
                 ? undefined
                 : `translate3d(${offset}px, 0, 0)`,
@@ -327,8 +349,9 @@ export function Experience() {
                     cardRefs.current[index] = node;
                   }}
                   aria-current={isActive ? "true" : undefined}
-                  className="relative w-[78vw] sm:w-[420px] lg:w-[440px] shrink-0 flex flex-col"
+                  className="relative shrink-0 flex flex-col"
                   style={{
+                    width: `${cardWidth}px`,
                     opacity: isActive ? 1 : 0.55,
                     transform: `scale(${isActive ? 1 : 0.96})`,
                     transition: reducedMotion

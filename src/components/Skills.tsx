@@ -228,15 +228,18 @@ interface RailGeometry {
   falloff: number;
 }
 
+// falloff is ~1.4x the card pitch (width + gap): the centred card is sharp, its
+// neighbour sits about half-dim, and anything beyond fades out. Much wider and
+// every card is half-blurred at once, which reads as slow to focus.
 const RAIL_DESKTOP: RailGeometry = {
   cardWidth: 320,
   cardHeight: 380,
-  falloff: 620,
+  falloff: 490,
 };
 const RAIL_TABLET: RailGeometry = {
   cardWidth: 280,
   cardHeight: 360,
-  falloff: 520,
+  falloff: 430,
 };
 const RAIL_MOBILE: RailGeometry = {
   cardWidth: 240,
@@ -276,11 +279,17 @@ export function Skills() {
     return () => window.removeEventListener("resize", pick);
   }, []);
 
+  // 13 cards at 1:1 meant ~4,500px of scrolling before the page moved on.
+  // 0.5 halves that and doubles how fast the rail travels per scroll.
   const { distance, progress, offset, sectionHeight } = usePinnedTrack(
     sectionRef,
     trackRef,
     !reducedMotion,
+    0.5,
   );
+
+  /** Lets the first and last card reach the middle of the stage. */
+  const endPadding = `calc(50vw - ${rail.cardWidth / 2}px)`;
 
   // Emphasis follows distance from the centre of the stage, so the card being
   // read is the sharp one and its neighbours fall away gently.
@@ -396,8 +405,10 @@ export function Skills() {
         >
           <div
             ref={trackRef}
-            className="flex items-center gap-5 sm:gap-7 w-max px-[10vw] sm:px-[38vw] py-6"
+            className="flex items-center gap-5 sm:gap-7 w-max py-6"
             style={{
+              paddingLeft: endPadding,
+              paddingRight: endPadding,
               transform: reducedMotion
                 ? undefined
                 : `translate3d(${offset}px, 0, 0)`,
@@ -430,9 +441,12 @@ export function Skills() {
                     filter: reducedMotion
                       ? undefined
                       : `blur(${(1 - sharpness) * 1.6}px)`,
+                    // Focus is recomputed every scroll frame, so a long
+                    // transition just lags behind the pointer. Keep it short
+                    // enough to only smooth the jumps from dot/arrow jumps.
                     transition: reducedMotion
                       ? "none"
-                      : "opacity 300ms linear, transform 300ms cubic-bezier(0.16, 1, 0.3, 1), filter 300ms linear",
+                      : "opacity 120ms linear, transform 120ms ease-out, filter 120ms linear",
                     willChange: "transform, opacity",
                   }}
                 >
