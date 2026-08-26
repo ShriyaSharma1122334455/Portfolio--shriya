@@ -1,11 +1,49 @@
 import { motion, useReducedMotion, type Variants } from "motion/react";
-import { Award } from "lucide-react";
+import awsLogo from "../../assets/AWS.webp";
+import googleLogo from "../../assets/google.webp";
+import njitLogo from "../../assets/NJIT.png";
+import nsfLogo from "../../assets/nsf.png";
 
-const CREDENTIALS = [
-  "AWS Certified Cloud Practitioner",
-  "Google Project Management Certificate",
-  "NJIT Entrepreneurial Experience Badge",
-  "NSF I-Corps — North Eastern Region",
+interface Credential {
+  name: string;
+  logo: string;
+  /** Issuer, used for the image's accessible name. */
+  issuer: string;
+  /**
+   * Optional CSS filter. These are supplied as light-background artwork, so the
+   * ones carrying dark ink need lifting to stay visible on the dark card.
+   */
+  filter?: string;
+}
+
+const CREDENTIALS: Credential[] = [
+  {
+    name: "AWS Certified Cloud Practitioner",
+    logo: awsLogo,
+    issuer: "Amazon Web Services",
+    // Navy wordmark — invisible as-is, so render it as a white silhouette.
+    filter: "brightness(0) invert(1)",
+  },
+  {
+    name: "Google Project Management Certificate",
+    logo: googleLogo,
+    issuer: "Google",
+    // Full-colour mark already reads on dark; leave it alone.
+  },
+  {
+    name: "NJIT Entrepreneurial Experience Badge",
+    logo: njitLogo,
+    issuer: "New Jersey Institute of Technology",
+    // Red on transparent — visible already, just a touch brighter.
+    filter: "brightness(1.12)",
+  },
+  {
+    name: "NSF I-Corps — North Eastern Region",
+    logo: nsfLogo,
+    issuer: "National Science Foundation",
+    // Blue/gold lockup with darker blue type; lift without washing it out.
+    filter: "brightness(1.35) saturate(1.15)",
+  },
 ];
 
 export function About() {
@@ -101,13 +139,24 @@ export function About() {
         >
           {CREDENTIALS.map((credential) => (
             <motion.li
-              key={credential}
+              key={credential.name}
               variants={badge}
-              className="glass-card rounded-xl px-4 py-3 flex items-center gap-3 will-change-transform"
+              className="glass-card rounded-xl px-5 py-5 flex flex-col gap-4 will-change-transform"
             >
-              <Award className="h-4 w-4 shrink-0 text-teal-400" />
-              <span className="text-[13px] leading-snug text-zinc-200">
-                {credential}
+              {/* These marks run 1:1 (Google) to ~3.2:1 (NSF). Fixing the
+                  height and letting width follow is what makes a mixed set sit
+                  together — a shared box would shrink the wide lockups to a
+                  smudge. Stacked above the label so they get the full card
+                  width to be large in. */}
+              <img
+                src={credential.logo}
+                alt={credential.issuer}
+                loading="lazy"
+                className="h-12 sm:h-14 w-auto max-w-full self-start object-contain object-left"
+                style={{ filter: credential.filter }}
+              />
+              <span className="text-[12.5px] leading-snug text-zinc-200">
+                {credential.name}
               </span>
             </motion.li>
           ))}
