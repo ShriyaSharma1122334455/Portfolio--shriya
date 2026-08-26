@@ -6,7 +6,7 @@ export function Education() {
       type: "Degree",
       title: "M.S. Computer Science",
       institution: "New Jersey Institute of Technology, Newark, NJ",
-      period: "Jun 2022 — May 2026",
+      period: "Sept 2022 — May 2026",
       details: "GPA: 3.6/4.0",
     },
     {

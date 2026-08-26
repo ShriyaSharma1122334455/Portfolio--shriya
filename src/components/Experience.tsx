@@ -6,6 +6,7 @@ import {
   Briefcase,
   GraduationCap,
   Award,
+  Users,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -39,6 +40,8 @@ interface TimelineEntry {
   achievements?: Achievement[];
   skills?: string[];
   credentials?: Credential[];
+  /** Clubs, societies and volunteering — education nodes only. */
+  activities?: string[];
   accentColor: string;
 }
 
@@ -135,12 +138,16 @@ const TIMELINE: TimelineEntry[] = [
     kind: "education",
     title: "M.S. Computer Science",
     org: "New Jersey Institute of Technology, Newark, NJ",
-    period: "Jun 2022 — May 2026",
-    marker: "2022",
+    period: "2024 — 2026",
+    marker: "2024",
     location: "Newark, NJ",
     description: "GPA: 3.6/4.0",
     // Certifications now live in the About section's credential badges.
     credentials: [],
+    activities: [
+      "President — GWICS (Graduate Women in Computer Science)",
+      "Volunteer, NJIT Food Pantry",
+    ],
     accentColor: "#fbbf24",
   },
   {
@@ -153,6 +160,7 @@ const TIMELINE: TimelineEntry[] = [
     location: "Mumbai, India",
     description: "GPA: 3.5/4.0",
     credentials: [],
+    activities: ["Sponsorship Manager", "Member, Badminton Club"],
     accentColor: "#f59e0b",
   },
 ];
@@ -452,6 +460,28 @@ export function Experience() {
                           </li>
                         ))}
                       </ul>
+                    )}
+
+                    {entry.activities && entry.activities.length > 0 && (
+                      <div className="mt-4 min-h-0">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                          Involvement
+                        </span>
+                        <ul className="mt-2 space-y-1.5">
+                          {entry.activities.map((activity) => (
+                            <li
+                              key={activity}
+                              className="flex gap-2 text-[12.5px] text-zinc-300"
+                            >
+                              <Users
+                                className="h-3.5 w-3.5 mt-0.5 shrink-0"
+                                style={{ color: entry.accentColor }}
+                              />
+                              <span className="leading-relaxed">{activity}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
 
                     {entry.skills && entry.skills.length > 0 && (
