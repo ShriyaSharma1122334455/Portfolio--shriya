@@ -1,17 +1,26 @@
 import { useState, useEffect, type FormEvent } from 'react';
-import { X, Send, Check, Mail, Copy } from 'lucide-react';
+import { X, Send, Check, Mail, Copy, Loader2, AlertCircle } from 'lucide-react';
+import { sendContactMessage } from '../lib/sendContactMessage';
 
 interface ContactModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+type Status = 'idle' | 'sending' | 'sent' | 'error';
+
 export function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [copied, setCopied] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<Status>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+    company: '', // honeypot
+  });
 
-  const emailAddress = 'shri25ya@gmail.com';
+  const emailAddress = 'shriyasharma2152@gmail.com';
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,13 +46,27 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      onClose();
-    }, 2500);
+    if (status === 'sending') return;
+
+    setStatus('sending');
+    setErrorMessage('');
+
+    const result = await sendContactMessage(formData);
+
+    if (result.ok) {
+      setStatus('sent');
+      setFormData({ name: '', email: '', message: '', company: '' });
+      // Give the confirmation a beat to be read before the dialog closes.
+      setTimeout(() => {
+        setStatus('idle');
+        onClose();
+      }, 2500);
+    } else {
+      setStatus('error');
+      setErrorMessage(result.error ?? "Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -79,7 +102,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </button>
         </div>
 
-        {submitted ? (
+        {status === 'sent' ? (
           <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
             <Check className="h-5 w-5 text-emerald-400 mx-auto" />
             <h4 className="text-sm font-semibold text-white">Thank you!</h4>
@@ -87,6 +110,17 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3.5">
+            {/* Honeypot — hidden from people, irresistible to bots. */}
+            <input
+              type="text"
+              name="company"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={formData.company}
+              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              className="hidden"
+            />
             <div>
               <label className="block text-xs font-medium text-zinc-400 mb-1">Name</label>
               <input
@@ -120,12 +154,32 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none resize-none"
               />
             </div>
+            {status === 'error' && (
+              <div
+                role="alert"
+                className="flex items-start gap-2 rounded-xl border border-red-500/25 bg-red-500/10 px-3 py-2 text-[11px] text-red-200"
+              >
+                <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0 text-red-400" />
+                <span className="leading-relaxed">{errorMessage}</span>
+              </div>
+            )}
+
             <button
               type="submit"
-              className="w-full rounded-xl bg-white hover:bg-zinc-200 text-zinc-950 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
+              disabled={status === 'sending'}
+              className="w-full rounded-xl bg-white hover:bg-zinc-200 disabled:bg-zinc-400 disabled:cursor-not-allowed text-zinc-950 py-2.5 text-xs font-semibold flex items-center justify-center gap-2 transition-colors shadow-sm"
             >
-              <span>Send Inquiry</span>
-              <Send className="h-3.5 w-3.5" />
+              {status === 'sending' ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <span>Sending…</span>
+                </>
+              ) : (
+                <>
+                  <span>Send Inquiry</span>
+                  <Send className="h-3.5 w-3.5" />
+                </>
+              )}
             </button>
           </form>
         )}
