@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { X, ArrowUpRight } from 'lucide-react';
+import { useState, useEffect } from "react";
+import { X, ArrowUpRight } from "lucide-react";
 
 interface NavbarProps {
   onContactClick: () => void;
@@ -13,18 +13,17 @@ export function Navbar({ onContactClick }: NavbarProps) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { label: 'Services', href: '#services' },
-    { label: 'About', href: '#about' },
-    { label: 'Experience', href: '#experience' },
-    { label: 'Projects', href: '#projects' },
-    { label: 'Skills', href: '#skills' },
-    { label: 'Education', href: '#education' },
-    { label: 'Contact', href: '#contact' },
+    { label: "About", href: "#about" },
+    { label: "Services", href: "#services" },
+    { label: "Career Journey", href: "#experience" },
+    { label: "Projects", href: "#projects" },
+    { label: "Skills", href: "#skills" },
+    { label: "Contact", href: "#contact" },
   ];
 
   return (
@@ -32,8 +31,8 @@ export function Navbar({ onContactClick }: NavbarProps) {
       <header
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           scrolled
-            ? 'bg-[#030407]/80 backdrop-blur-md py-4 border-b border-white/[0.04]'
-            : 'bg-transparent py-7 sm:py-9'
+            ? "bg-[#030407]/80 backdrop-blur-md py-4 border-b border-white/[0.04]"
+            : "bg-transparent py-7 sm:py-9"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 sm:px-10 md:px-14 flex items-center justify-between">
@@ -76,12 +75,12 @@ export function Navbar({ onContactClick }: NavbarProps) {
           >
             <span
               className={`block w-6 h-[1.5px] bg-white transition-transform duration-300 ${
-                mobileOpen ? 'rotate-45 translate-y-[3.5px]' : ''
+                mobileOpen ? "rotate-45 translate-y-[3.5px]" : ""
               }`}
             />
             <span
               className={`block w-6 h-[1.5px] bg-white transition-transform duration-300 ${
-                mobileOpen ? '-rotate-45 -translate-y-[4px]' : ''
+                mobileOpen ? "-rotate-45 -translate-y-[4px]" : ""
               }`}
             />
           </button>
@@ -98,7 +97,9 @@ export function Navbar({ onContactClick }: NavbarProps) {
                 href={link.href}
                 onClick={() => setMobileOpen(false)}
                 className="font-serif text-3xl sm:text-4xl text-zinc-300 hover:text-white transition-colors"
-                style={{ fontFamily: "'Instrument Serif', 'Cormorant Garamond', serif" }}
+                style={{
+                  fontFamily: "'Instrument Serif', 'Cormorant Garamond', serif",
+                }}
               >
                 {link.label}
               </a>

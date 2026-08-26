@@ -1,6 +1,14 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Activity, Bot, Cloud, Database, Layers, Server, Zap } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import {
+  Activity,
+  Bot,
+  Cloud,
+  Database,
+  Layers,
+  Server,
+  Zap,
+} from "lucide-react";
 
 interface ServiceItem {
   id: string;
@@ -14,100 +22,117 @@ interface ServiceItem {
 
 const SERVICES: ServiceItem[] = [
   {
-    id: 'web-frontend-development',
-    number: '01',
-    title: 'Web & Frontend Development',
+    id: "software-development",
+    number: "01",
+    title: "Software Development",
     description:
-      'I build user-facing web applications that are fast, accessible, and easy to maintain — from component architecture to the interactions that make an interface feel right.',
+      "I design and build full-stack systems end-to-end — from architecture decisions to implementation and deployment — with an eye for how components scale and communicate as an app grows past its first version.",
     features: [
-      'React & Next.js Development',
-      'TypeScript Component Systems',
-      'State Management (Zustand)',
-      'UI/UX Heuristics & Accessibility',
-      'Responsive, Data-Dense Interfaces',
+      "System Design & Architecture",
+      "Distributed & Multi-Service Systems",
+      "Docker Containerization",
+      "CI/CD Pipelines (GitHub Actions, GitLab CI/CD)",
+      "Full SDLC Ownership (Requirements → Deployment)",
+      "React, Node.js, FastAPI",
     ],
-    ambientGlow: 'rgba(99, 102, 241, 0.16)', // Indigo
-    badge: 'Frontend & UI',
+    ambientGlow: "rgba(99, 102, 241, 0.16)", // Indigo
+    badge: "Software Development",
   },
   {
-    id: 'api-backend-systems',
-    number: '02',
-    title: 'API & Backend Systems',
+    id: "ai-full-stack-engineer",
+    number: "02",
+    title: "AI Full-Stack Engineer",
     description:
-      'I design and build the backend logic that powers an app — clean APIs, secure auth, and services that hold up under real traffic.',
+      "I build products with AI features baked into the full stack — not just a model call bolted onto an app, but the UI, backend, and data layer designed around what the AI actually needs to work well.",
     features: [
-      'REST API Design',
-      'Authentication (JWT, OAuth)',
-      'Backend Services (Node.js, FastAPI)',
-      'Performance Optimization (Redis Caching)',
-      'Query & Query-Layer Tuning',
+      "AI-Integrated Product Development",
+      "Multimodal Model Integration (Gemini, Google ADK)",
+      "RAG & Agent-Backed Features",
+      "React + FastAPI/Node.js",
+      "Human-in-the-Loop Review Flows",
     ],
-    ambientGlow: 'rgba(56, 189, 248, 0.16)', // Cyan / Sky
-    badge: 'API & Backend',
+    ambientGlow: "rgba(236, 72, 153, 0.16)", // Pink / Magenta
+    badge: "AI Full-Stack",
   },
   {
-    id: 'cloud-devops',
-    number: '03',
-    title: 'Cloud & DevOps',
+    id: "backend-engineer",
+    number: "03",
+    title: "Backend Engineer",
     description:
-      'I set up the infrastructure and pipelines that get code from a laptop to production reliably and repeatably.',
+      "I build the backend logic that powers an app — clean APIs, secure auth, and services designed to hold up under real production traffic and SLAs.",
     features: [
-      'AWS Infrastructure (EC2, S3, Lambda, IAM)',
-      'Docker Containerization',
-      'CI/CD Pipelines (GitHub Actions, GitLab CI/CD)',
-      'Environment & Deployment Management',
-      'Automated Build/Test/Deploy Workflows',
+      "REST API Design",
+      "Authentication (JWT, OAuth)",
+      "Backend Services (Node.js, FastAPI)",
+      "Redis Caching & Performance Tuning",
+      "Production Debugging Under SLA",
     ],
-    ambientGlow: 'rgba(45, 212, 191, 0.16)', // Teal
-    badge: 'Cloud & CI/CD',
+    ambientGlow: "rgba(56, 189, 248, 0.16)", // Cyan / Sky
+    badge: "Backend",
   },
   {
-    id: 'database-architecture',
-    number: '04',
-    title: 'Database Architecture',
+    id: "data-analyst",
+    number: "04",
+    title: "Data Analyst",
     description:
-      'I design schemas and data layers that stay fast and consistent as an app grows.',
+      'I turn raw data into dashboards and reports that non-technical stakeholders can actually act on — cutting the time between "we have data" and "we made a decision."',
     features: [
-      'Schema Design (PostgreSQL/Supabase, MongoDB, MySQL)',
-      'Row-Level Security',
-      'Indexing & Query Performance',
-      'Data Validation & Integrity Checks',
-      'Migration Planning',
+      "Tableau & Power BI Dashboards",
+      "SQL Querying & Aggregation",
+      "Trend & Occupancy/Usage Analysis",
+      "Data Validation & Anomaly Detection",
+      "Stakeholder Reporting",
     ],
-    ambientGlow: 'rgba(245, 158, 11, 0.15)', // Amber
-    badge: 'Data & Schemas',
+    ambientGlow: "rgba(245, 158, 11, 0.15)", // Amber
+    badge: "Data Analysis",
   },
   {
-    id: 'tech-support-observability',
-    number: '05',
-    title: 'Technical Support, Monitoring & Observability',
+    id: "data-architect",
+    number: "05",
+    title: "Data Architect",
     description:
-      "I keep production systems healthy — catching issues early, resolving incidents fast, and documenting fixes so they don't repeat.",
+      "I design schemas and data layers that stay fast and consistent as an application scales — thinking through indexing, security, and access patterns before they become a bottleneck.",
     features: [
-      'System Health Monitoring',
-      'Incident Management (ITIL)',
-      'Root-Cause Analysis',
-      'SOP & Runbook Authoring',
-      'Tier 1/2 Application Support',
+      "Schema Design (PostgreSQL/Supabase, MongoDB, DynamoDB)",
+      "Row-Level Security",
+      "Indexing & Query Performance",
+      "Migration Planning",
+      "Multi-Database Architecture Decisions",
     ],
-    ambientGlow: 'rgba(168, 85, 247, 0.16)', // Violet / Purple
-    badge: 'Reliability & Ops',
+    ambientGlow: "rgba(52, 211, 153, 0.16)", // Emerald
+    badge: "Data Architecture",
   },
   {
-    id: 'ai-systems-automation',
-    number: '06',
-    title: 'AI-Powered Systems & Automation',
+    id: "ai-systems-automation",
+    number: "06",
+    title: "AI Systems & Automation",
     description:
-      'I build AI-driven features and automate manual processes, replacing repetitive work with systems that run themselves.',
+      "I build multi-agent AI systems and automate the repetitive parts of a workflow — replacing manual processes with systems that run themselves.",
     features: [
-      'AI Agent & RAG Systems',
-      'Multi-Agent Workflows (LangGraph, AWS Bedrock)',
-      'LLM Integration (Gemini, Google ADK)',
-      'Workflow Automation (Power Automate, Python)',
-      'Process Optimization',
+      "Multi-Agent Workflows (LangGraph, AWS Bedrock)",
+      "Explainable AI Recommendations",
+      "Workflow Automation (Power Automate, Python)",
+      "Process Optimization",
+      "LLM Integration",
     ],
-    ambientGlow: 'rgba(236, 72, 153, 0.16)', // Pink / Magenta
-    badge: 'AI & Automation',
+    ambientGlow: "rgba(168, 85, 247, 0.16)", // Violet / Purple
+    badge: "AI & Automation",
+  },
+  {
+    id: "tech-support-observability",
+    number: "07",
+    title: "Technical Support & Observability",
+    description:
+      "I keep production systems healthy after launch — catching issues early, resolving incidents fast, and documenting fixes so the same problem doesn't come back.",
+    features: [
+      "System Health Monitoring",
+      "Incident Management (ITIL)",
+      "Root-Cause Analysis",
+      "SOP & Runbook Authoring",
+      "Tier 1/2 Application Support",
+    ],
+    ambientGlow: "rgba(45, 212, 191, 0.16)", // Teal
+    badge: "Reliability & Ops",
   },
 ];
 
@@ -137,7 +162,7 @@ export function Services({ onContactClick }: ServicesProps) {
       const progress = -el.getBoundingClientRect().top / scrollable;
       const next = Math.min(
         SERVICES.length - 1,
-        Math.max(0, Math.floor(progress * SERVICES.length))
+        Math.max(0, Math.floor(progress * SERVICES.length)),
       );
 
       setActiveIndex((current) => (current === next ? current : next));
@@ -149,13 +174,13 @@ export function Services({ onContactClick }: ServicesProps) {
     };
 
     measure();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
 
     return () => {
       if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
     };
   }, []);
 
@@ -170,7 +195,7 @@ export function Services({ onContactClick }: ServicesProps) {
     // Land mid-step so the target index is unambiguous.
     const targetScroll = top + stepHeight * (index + 0.5);
 
-    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+    window.scrollTo({ top: targetScroll, behavior: "smooth" });
   }, []);
 
   return (
@@ -181,7 +206,6 @@ export function Services({ onContactClick }: ServicesProps) {
     >
       {/* Sticky Fullscreen Presentation Frame */}
       <div className="sticky top-0 h-screen w-full flex flex-col justify-between overflow-hidden px-6 sm:px-10 md:px-16 lg:px-24 py-8 sm:py-12 select-none">
-        
         {/* Subtle Horizontal Laser / Ambient Glow Beam */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
           {/* Glowing horizontal laser streak across center */}
@@ -192,8 +216,8 @@ export function Services({ onContactClick }: ServicesProps) {
           <motion.div
             animate={{
               backgroundColor: currentService.ambientGlow,
-              x: activeIndex % 2 === 0 ? '-10%' : '12%',
-              y: activeIndex < 3 ? '-6%' : '8%',
+              x: activeIndex % 2 === 0 ? "-10%" : "12%",
+              y: activeIndex < 3 ? "-6%" : "8%",
             }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[520px] w-[520px] sm:h-[680px] sm:w-[680px] rounded-full blur-[140px] opacity-70 will-change-transform"
@@ -209,7 +233,10 @@ export function Services({ onContactClick }: ServicesProps) {
         <div className="relative z-10 max-w-7xl mx-auto w-full pt-2 sm:pt-4">
           <h2
             className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl italic font-normal text-white tracking-tight leading-none"
-            style={{ fontFamily: "'Instrument Serif', 'Cormorant Garamond', Georgia, serif" }}
+            style={{
+              fontFamily:
+                "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
+            }}
           >
             Services
           </h2>
@@ -220,11 +247,9 @@ export function Services({ onContactClick }: ServicesProps) {
 
         {/* Main Content Layout: Left Dynamic Visuals + Right Storytelling Column */}
         <div className="relative z-10 max-w-7xl mx-auto w-full my-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-          
           {/* Left Column: Rich Dark Visual / Mockup Canvas that smoothly crossfades */}
           <div className="lg:col-span-6 hidden md:flex items-center justify-center">
             <div className="relative w-full max-w-[480px] aspect-[4/3.5] rounded-2xl bg-[#090b11]/85 border border-white/[0.08] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden p-6 flex flex-col justify-between backdrop-blur-md">
-              
               {/* Inner ambient glow */}
               <div
                 className="absolute inset-0 transition-opacity duration-700 pointer-events-none opacity-30"
@@ -271,30 +296,49 @@ export function Services({ onContactClick }: ServicesProps) {
                               <Layers className="h-3.5 w-3.5 text-indigo-400" />
                               <span>ZustandStore.tsx</span>
                             </span>
-                            <span className="text-indigo-400">60 FPS &bull; Fast</span>
+                            <span className="text-indigo-400">
+                              60 FPS &bull; Fast
+                            </span>
                           </div>
-                          
+
                           {/* Visual Design Tokens & Spring Physics Blocks */}
                           <div className="grid grid-cols-4 gap-1.5 py-1">
-                            <div className="h-6 rounded bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-[9px] text-indigo-200">#Next15</div>
-                            <div className="h-6 rounded bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-[9px] text-teal-200">#TypeScript</div>
-                            <div className="h-6 rounded bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-[9px] text-sky-200">#Zustand</div>
-                            <div className="h-6 rounded bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-[9px] text-purple-200">#WCAG_AA</div>
+                            <div className="h-6 rounded bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-[9px] text-indigo-200">
+                              #Next15
+                            </div>
+                            <div className="h-6 rounded bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-[9px] text-teal-200">
+                              #TypeScript
+                            </div>
+                            <div className="h-6 rounded bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-[9px] text-sky-200">
+                              #Zustand
+                            </div>
+                            <div className="h-6 rounded bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-[9px] text-purple-200">
+                              #WCAG_AA
+                            </div>
                           </div>
 
                           <p className="text-[11px] font-sans text-zinc-400">
-                            Fast, accessible, and type-safe component systems with responsive state sync.
+                            Fast, accessible, and type-safe component systems
+                            with responsive state sync.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-[11px]">
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Lighthouse Score</span>
-                            <span className="text-white font-semibold">100 / 100</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Lighthouse Score
+                            </span>
+                            <span className="text-white font-semibold">
+                              100 / 100
+                            </span>
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Accessibility</span>
-                            <span className="text-emerald-400 font-semibold">WCAG AA Pass</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Accessibility
+                            </span>
+                            <span className="text-emerald-400 font-semibold">
+                              WCAG AA Pass
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -309,24 +353,35 @@ export function Services({ onContactClick }: ServicesProps) {
                               <Server className="h-3.5 w-3.5 text-sky-400" />
                               <span>fastapi_auth_router.py</span>
                             </span>
-                            <span className="text-emerald-400">HTTP 200 &bull; 8ms</span>
+                            <span className="text-emerald-400">
+                              HTTP 200 &bull; 8ms
+                            </span>
                           </div>
                           <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
                             <div className="h-full w-4/5 bg-sky-400/80 rounded-full" />
                           </div>
                           <p className="text-[11px] font-sans text-zinc-400">
-                            JWT/OAuth secure token verification with sub-10ms Redis caching tier.
+                            JWT/OAuth secure token verification with sub-10ms
+                            Redis caching tier.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-[11px]">
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Throughput</span>
-                            <span className="text-white font-semibold">15,000 req/s</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Throughput
+                            </span>
+                            <span className="text-white font-semibold">
+                              15,000 req/s
+                            </span>
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Cache Hit Rate</span>
-                            <span className="text-emerald-400 font-semibold">96.4%</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Cache Hit Rate
+                            </span>
+                            <span className="text-emerald-400 font-semibold">
+                              96.4%
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -346,23 +401,36 @@ export function Services({ onContactClick }: ServicesProps) {
 
                           {/* Node Connectors */}
                           <div className="flex items-center justify-between text-[10px] bg-white/[0.02] p-2 rounded-lg border border-white/[0.04]">
-                            <span className="text-zinc-300">Lambda &bull; S3 &bull; EC2 Fargate</span>
-                            <span className="text-emerald-400">&bull; Passing</span>
+                            <span className="text-zinc-300">
+                              Lambda &bull; S3 &bull; EC2 Fargate
+                            </span>
+                            <span className="text-emerald-400">
+                              &bull; Passing
+                            </span>
                           </div>
 
                           <p className="text-[11px] font-sans text-zinc-400">
-                            Automated GitHub Actions CI/CD with immutable containerized artifacts.
+                            Automated GitHub Actions CI/CD with immutable
+                            containerized artifacts.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-[11px]">
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Build/Deploy Time</span>
-                            <span className="text-white font-semibold">&lt; 2.5 Mins</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Build/Deploy Time
+                            </span>
+                            <span className="text-white font-semibold">
+                              &lt; 2.5 Mins
+                            </span>
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Rollback SLA</span>
-                            <span className="text-emerald-400 font-semibold">Instant (0s)</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Rollback SLA
+                            </span>
+                            <span className="text-emerald-400 font-semibold">
+                              Instant (0s)
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -381,23 +449,36 @@ export function Services({ onContactClick }: ServicesProps) {
                           </div>
 
                           <div className="text-[10px] text-zinc-400 space-y-1 font-mono">
-                            <div className="text-emerald-400">✓ Row-Level Security Enforced</div>
-                            <div className="text-zinc-300">✓ B-Tree Composite Index Active</div>
+                            <div className="text-emerald-400">
+                              ✓ Row-Level Security Enforced
+                            </div>
+                            <div className="text-zinc-300">
+                              ✓ B-Tree Composite Index Active
+                            </div>
                           </div>
 
                           <p className="text-[11px] font-sans text-zinc-400">
-                            Normalized schema design, atomic transaction safety, and migration planning.
+                            Normalized schema design, atomic transaction safety,
+                            and migration planning.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-[11px]">
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Query Time</span>
-                            <span className="text-white font-semibold">&lt; 4ms Index Scan</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Query Time
+                            </span>
+                            <span className="text-white font-semibold">
+                              &lt; 4ms Index Scan
+                            </span>
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Data Integrity</span>
-                            <span className="text-emerald-400 font-semibold">100% ACID</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Data Integrity
+                            </span>
+                            <span className="text-emerald-400 font-semibold">
+                              100% ACID
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -412,27 +493,42 @@ export function Services({ onContactClick }: ServicesProps) {
                               <Activity className="h-3.5 w-3.5 text-purple-400" />
                               <span>itil_incident_stream.log</span>
                             </span>
-                            <span className="text-purple-400">Observability</span>
+                            <span className="text-purple-400">
+                              Observability
+                            </span>
                           </div>
 
                           <div className="text-[10px] text-zinc-400 space-y-1 font-mono">
-                            <div className="text-emerald-400">[Resolved] Zero Production Deadlocks</div>
-                            <div className="text-zinc-300">[SOP] Automated Diagnostic Runbook Executed</div>
+                            <div className="text-emerald-400">
+                              [Resolved] Zero Production Deadlocks
+                            </div>
+                            <div className="text-zinc-300">
+                              [SOP] Automated Diagnostic Runbook Executed
+                            </div>
                           </div>
 
                           <p className="text-[11px] font-sans text-zinc-400">
-                            Root-cause incident triage, real-time health metrics, and comprehensive SOPs.
+                            Root-cause incident triage, real-time health
+                            metrics, and comprehensive SOPs.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-[11px]">
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">SLA Compliance</span>
-                            <span className="text-white font-semibold">99.9% Uptime</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              SLA Compliance
+                            </span>
+                            <span className="text-white font-semibold">
+                              99.9% Uptime
+                            </span>
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">MTTR</span>
-                            <span className="text-emerald-400 font-semibold">&lt; 10 Mins</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              MTTR
+                            </span>
+                            <span className="text-emerald-400 font-semibold">
+                              &lt; 10 Mins
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -451,23 +547,36 @@ export function Services({ onContactClick }: ServicesProps) {
                           </div>
 
                           <div className="text-[10px] text-zinc-400 space-y-1 font-mono">
-                            <div className="text-emerald-400">✓ Vector Store Retrieval &bull; Top-k: 5</div>
-                            <div className="text-zinc-300">✓ Autonomous Tool Call Executed</div>
+                            <div className="text-emerald-400">
+                              ✓ Vector Store Retrieval &bull; Top-k: 5
+                            </div>
+                            <div className="text-zinc-300">
+                              ✓ Autonomous Tool Call Executed
+                            </div>
                           </div>
 
                           <p className="text-[11px] font-sans text-zinc-400">
-                            Multi-agent orchestration (LangGraph, AWS Bedrock) and workflow automation.
+                            Multi-agent orchestration (LangGraph, AWS Bedrock)
+                            and workflow automation.
                           </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 text-[11px]">
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Time Saved</span>
-                            <span className="text-white font-semibold">85%+ Manual Work</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Time Saved
+                            </span>
+                            <span className="text-white font-semibold">
+                              85%+ Manual Work
+                            </span>
                           </div>
                           <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">Accuracy</span>
-                            <span className="text-emerald-400 font-semibold">Grounded / Cited</span>
+                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
+                              Accuracy
+                            </span>
+                            <span className="text-emerald-400 font-semibold">
+                              Grounded / Cited
+                            </span>
                           </div>
                         </div>
                       </div>
@@ -489,15 +598,14 @@ export function Services({ onContactClick }: ServicesProps) {
 
           {/* Right Column: Clean, Non-Overlapping Scroll-Driven Storytelling */}
           <div className="lg:col-span-6 flex flex-col justify-center">
-            
             {/* Dynamic Service Text with AnimatePresence mode="wait" to eliminate ghosting/overlap */}
             <div className="min-h-[260px] sm:min-h-[320px] md:min-h-[330px] flex flex-col justify-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentService.id}
-                  initial={{ opacity: 0, y: 16, filter: 'blur(3px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -16, filter: 'blur(3px)' }}
+                  initial={{ opacity: 0, y: 16, filter: "blur(3px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  exit={{ opacity: 0, y: -16, filter: "blur(3px)" }}
                   transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
                   className="space-y-4"
                 >
@@ -534,7 +642,6 @@ export function Services({ onContactClick }: ServicesProps) {
 
             {/* Persistent Section Skeleton: Single Contact Button & Step Navigation */}
             <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between gap-4 mt-2">
-              
               {/* Persistent Neon Blue Glowing Contact Button */}
               <div className="relative inline-flex items-center justify-center">
                 <button
@@ -555,8 +662,8 @@ export function Services({ onContactClick }: ServicesProps) {
               {/* Step Navigation Dots for all 6 services */}
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-mono text-zinc-500 mr-2">
-                  {String(activeIndex + 1).padStart(2, '0')} /{' '}
-                  {String(SERVICES.length).padStart(2, '0')}
+                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                  {String(SERVICES.length).padStart(2, "0")}
                 </span>
                 {SERVICES.map((s, idx) => (
                   <button
@@ -564,29 +671,31 @@ export function Services({ onContactClick }: ServicesProps) {
                     onClick={() => scrollToService(idx)}
                     className="group p-1 cursor-pointer"
                     aria-label={`Jump to ${s.title}`}
-                    aria-current={idx === activeIndex ? 'step' : undefined}
+                    aria-current={idx === activeIndex ? "step" : undefined}
                   >
                     <div
                       className={`h-1.5 rounded-full transition-all duration-300 ${
                         idx === activeIndex
-                          ? 'w-6 bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.8)]'
-                          : 'w-1.5 bg-zinc-700 hover:bg-zinc-500'
+                          ? "w-6 bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.8)]"
+                          : "w-1.5 bg-zinc-700 hover:bg-zinc-500"
                       }`}
                     />
                   </button>
                 ))}
               </div>
-
             </div>
-
           </div>
         </div>
 
         {/* Section Bottom Sub-navigation Cue */}
         <div className="relative z-10 max-w-7xl mx-auto w-full flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-white/[0.05]">
-          <span className="hidden sm:inline-block">Scroll down to explore capabilities</span>
+          <span className="hidden sm:inline-block">
+            Scroll down to explore capabilities
+          </span>
           <div className="flex items-center gap-3 ml-auto">
-            <span className="text-zinc-400 font-mono">{currentService.title}</span>
+            <span className="text-zinc-400 font-mono">
+              {currentService.title}
+            </span>
           </div>
         </div>
       </div>

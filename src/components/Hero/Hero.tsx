@@ -1,19 +1,26 @@
-import { useState, useEffect, useRef } from 'react';
-import { useScroll, useMotionValue, useSpring, motion, useTransform, AnimatePresence } from 'motion/react';
-import { HeroBackground } from './HeroBackground';
-import { ArrowDown, Sparkles } from 'lucide-react';
-import portraitImg from '../../assets/images/shriya_portrait_1787528786641.jpg';
+import { useState, useEffect, useRef } from "react";
+import {
+  useScroll,
+  useMotionValue,
+  useSpring,
+  motion,
+  useTransform,
+  AnimatePresence,
+} from "motion/react";
+import { HeroBackground } from "./HeroBackground";
+import { ArrowDown, Sparkles } from "lucide-react";
+import portraitImg from "../../assets/images/shriya_portrait_1787528786641.jpg";
 
 interface HeroProps {
   onContactClick: () => void;
 }
 
 const ROLES = [
-  'SOFTWARE DEVELOPER',
-  'CLOUD ENGINEER',
-  'FRONTEND DEVELOPER',
-  'TECHNICAL SUPPORT ENGINEER',
-  'FULL-STACK ARCHITECT',
+  "SOFTWARE DEVELOPER",
+  "CLOUD ENGINEER",
+  "FRONTEND DEVELOPER",
+  "TECHNICAL SUPPORT ENGINEER",
+  "FULL-STACK ARCHITECT",
 ];
 
 export function Hero({ onContactClick }: HeroProps) {
@@ -30,7 +37,7 @@ export function Hero({ onContactClick }: HeroProps) {
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start start', 'end start'],
+    offset: ["start start", "end start"],
   });
 
   const rawMouseX = useMotionValue(0);
@@ -44,7 +51,11 @@ export function Hero({ onContactClick }: HeroProps) {
   // As user scrolls, the hero section becomes prominent and ENLARGES (scales 1 -> 1.28)
   const heroScale = useTransform(scrollYProgress, [0, 0.9], [1, 1.28]);
   const heroY = useTransform(scrollYProgress, [0, 0.9], [0, 80]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.75, 1], [1, 0.95, 0.1]);
+  const heroOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.75, 1],
+    [1, 0.95, 0.1],
+  );
 
   // Subtle Parallax on elements with mouse
   const portraitParallaxX = useTransform(mouseXOffset, [-1, 1], [-14, 14]);
@@ -55,8 +66,8 @@ export function Hero({ onContactClick }: HeroProps) {
 
   useEffect(() => {
     if (
-      window.matchMedia('(pointer: coarse)').matches ||
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      window.matchMedia("(pointer: coarse)").matches ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
     ) {
       return;
     }
@@ -67,13 +78,13 @@ export function Hero({ onContactClick }: HeroProps) {
       rawMouseY.set((e.clientY / innerHeight) * 2 - 1);
     };
 
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [rawMouseX, rawMouseY]);
 
   const scrollToAbout = () => {
-    const el = document.getElementById('about');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    const el = document.getElementById("about");
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -96,7 +107,7 @@ export function Hero({ onContactClick }: HeroProps) {
           scale: heroScale,
           y: heroY,
           opacity: heroOpacity,
-          transformOrigin: 'center 40%',
+          transformOrigin: "center 40%",
         }}
         className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center my-auto will-change-transform"
       >
@@ -115,8 +126,10 @@ export function Hero({ onContactClick }: HeroProps) {
           <div
             className="w-full h-full relative"
             style={{
-              maskImage: 'radial-gradient(ellipse 85% 75% at 50% 40%, black 45%, transparent 95%)',
-              WebkitMaskImage: 'radial-gradient(ellipse 85% 75% at 50% 40%, black 45%, transparent 95%)',
+              maskImage:
+                "radial-gradient(ellipse 85% 75% at 50% 40%, black 45%, transparent 95%)",
+              WebkitMaskImage:
+                "radial-gradient(ellipse 85% 75% at 50% 40%, black 45%, transparent 95%)",
             }}
           >
             <img
@@ -142,9 +155,15 @@ export function Hero({ onContactClick }: HeroProps) {
           {/* Line 1: I'm Shriya (Serif + Elegant Italic) */}
           <h1
             className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal text-white tracking-tight"
-            style={{ fontFamily: "'Instrument Serif', 'Cormorant Garamond', Georgia, serif" }}
+            style={{
+              fontFamily:
+                "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
+            }}
           >
-            I'm <span className="italic font-normal tracking-wide text-zinc-100">Shriya</span>
+            I'm{" "}
+            <span className="italic font-normal tracking-wide text-zinc-100">
+              Shriya
+            </span>
           </h1>
 
           {/* Line 2: Role with Smooth Vertical Crossfade */}
@@ -157,7 +176,10 @@ export function Hero({ onContactClick }: HeroProps) {
                 exit={{ y: -24, opacity: 0 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal uppercase tracking-[0.06em] text-zinc-200"
-                style={{ fontFamily: "'Instrument Serif', 'Cormorant Garamond', Georgia, serif" }}
+                style={{
+                  fontFamily:
+                    "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
+                }}
               >
                 {ROLES[roleIndex]}
               </motion.h2>
@@ -192,7 +214,9 @@ export function Hero({ onContactClick }: HeroProps) {
           {/* Sub-badge: "✦ AWS Certified Solutions Architect • Software Engineer" */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 backdrop-blur-md text-[11px] sm:text-xs text-zinc-400 font-normal">
             <Sparkles className="h-3 w-3 text-cyan-400" />
-            <span className="text-zinc-300">AWS Certified Solutions Architect &bull; Software Engineer</span>
+            <span className="text-zinc-300">
+              AWS Certified &bull; Software Engineer
+            </span>
           </div>
         </motion.div>
       </motion.div>

@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface RoleRotatorProps {
   roles?: string[];
@@ -7,14 +7,17 @@ interface RoleRotatorProps {
 }
 
 const DEFAULT_ROLES = [
-  'Software Developer',
-  'Cloud Engineer',
-  'Frontend Developer',
-  'Technical Support Engineer',
-  'Full-Stack Developer',
+  "Software Developer",
+  "Cloud Engineer",
+  "Full-Stack Developer",
+  "Product/Project Manager",
+  "Technical Support Engineer",
 ];
 
-export function RoleRotator({ roles = DEFAULT_ROLES, intervalMs = 3000 }: RoleRotatorProps) {
+export function RoleRotator({
+  roles = DEFAULT_ROLES,
+  intervalMs = 3000,
+}: RoleRotatorProps) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
