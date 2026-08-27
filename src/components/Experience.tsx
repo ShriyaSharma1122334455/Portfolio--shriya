@@ -45,49 +45,21 @@ interface TimelineEntry {
   accentColor: string;
 }
 
-/** Roles first (most recent), then education — the track reads now-to-origin. */
+/** Strict chronological order, oldest first: the track reads left-to-right as
+ *  time moving forward, so the spine's progress fill tracks the passing years. */
 const TIMELINE: TimelineEntry[] = [
   {
-    id: "grad-assistant-resident-life",
-    kind: "role",
-    title: "Graduate Assistant, Resident Life",
-    org: "New Jersey Institute of Technology",
-    period: "May 2025 — Present",
-    marker: "2025",
-    location: "Newark, NJ",
-    type: "Part-Time",
-    description:
-      "Coordinating IT support, data reporting, and workflow automation for a 2,000+ resident community.",
-    achievements: [
-      {
-        text: "Served as first point of contact for 14 Resident Coordinators — onboarding, task tracking, and offboarding.",
-        tags: ["leadership", "ops"],
-      },
-      {
-        text: "Resolved 40–60 IT/administrative inquiries per month, independently troubleshooting hardware, software, and network issues.",
-        tags: ["ops"],
-      },
-      {
-        text: "Built Tableau dashboards from 10,000+ MySQL records, cutting weekly reporting time by 2–3 hours.",
-        tags: ["data"],
-      },
-      {
-        text: "Automated the reimbursement workflow with Power Automate, cutting processing time and error by 40%.",
-        tags: ["dev", "ops"],
-      },
-      {
-        text: "Trained and onboarded a newly hired Graduate Assistant on systems and support procedures.",
-        tags: ["leadership"],
-      },
-    ],
-    skills: [
-      "MySQL",
-      "Tableau",
-      "Python",
-      "Power Automate",
-      "Active Directory",
-    ],
-    accentColor: "#2dd4bf",
+    id: "education-be",
+    kind: "education",
+    title: "Bachelor's of Engineering, Information Technology",
+    org: "University of Mumbai",
+    period: "Completed Jun 2022",
+    marker: "2018",
+    location: "Mumbai, India",
+    description: "GPA: 3.5/4.0",
+    credentials: [],
+    activities: ["Sponsorship Manager", "Member, Badminton Club"],
+    accentColor: "#f59e0b",
   },
   {
     id: "software-developer-tcs",
@@ -151,17 +123,46 @@ const TIMELINE: TimelineEntry[] = [
     accentColor: "#fbbf24",
   },
   {
-    id: "education-be",
-    kind: "education",
-    title: "Bachelor's of Engineering, Information Technology",
-    org: "University of Mumbai",
-    period: "Completed Jun 2022",
-    marker: "2018",
-    location: "Mumbai, India",
-    description: "GPA: 3.5/4.0",
-    credentials: [],
-    activities: ["Sponsorship Manager", "Member, Badminton Club"],
-    accentColor: "#f59e0b",
+    id: "grad-assistant-resident-life",
+    kind: "role",
+    title: "Graduate Assistant, Resident Life",
+    org: "New Jersey Institute of Technology",
+    period: "May 2025 — Present",
+    marker: "2025",
+    location: "Newark, NJ",
+    type: "Part-Time",
+    description:
+      "Coordinating IT support, data reporting, and workflow automation for a 2,000+ resident community.",
+    achievements: [
+      {
+        text: "Served as first point of contact for 14 Resident Coordinators — onboarding, task tracking, and offboarding.",
+        tags: ["leadership", "ops"],
+      },
+      {
+        text: "Resolved 40–60 IT/administrative inquiries per month, independently troubleshooting hardware, software, and network issues.",
+        tags: ["ops"],
+      },
+      {
+        text: "Built Tableau dashboards from 10,000+ MySQL records, cutting weekly reporting time by 2–3 hours.",
+        tags: ["data"],
+      },
+      {
+        text: "Automated the reimbursement workflow with Power Automate, cutting processing time and error by 40%.",
+        tags: ["dev", "ops"],
+      },
+      {
+        text: "Trained and onboarded a newly hired Graduate Assistant on systems and support procedures.",
+        tags: ["leadership"],
+      },
+    ],
+    skills: [
+      "MySQL",
+      "Tableau",
+      "Python",
+      "Power Automate",
+      "Active Directory",
+    ],
+    accentColor: "#2dd4bf",
   },
 ];
 

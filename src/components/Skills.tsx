@@ -349,7 +349,7 @@ export function Skills() {
         </Marquee>
 
         {/* Full skill list for whichever card is being pointed at */}
-        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mt-10">
+        {/* <div className="px-6 sm:px-10 md:px-16 lg:px-24 mt-10">
           <div className="max-w-3xl mx-auto text-center">
             <div className="flex items-center justify-center gap-3">
               <span
@@ -381,7 +381,7 @@ export function Skills() {
               ))}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );
