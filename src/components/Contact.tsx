@@ -57,7 +57,9 @@ export function Contact() {
       });
     } else {
       setStatus("error");
-      setErrorMessage(result.error ?? "Something went wrong. Please try again.");
+      setErrorMessage(
+        result.error ?? "Something went wrong. Please try again.",
+      );
     }
   };
 
@@ -69,9 +71,9 @@ export function Contact() {
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="space-y-2 mb-12">
-          <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+          {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
             06 &bull; Contact
-          </span>
+          </span> */}
           <h2
             className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
             style={{
@@ -189,7 +191,11 @@ export function Contact() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4" noValidate={false}>
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-4"
+                noValidate={false}
+              >
                 {/* Honeypot — hidden from people, irresistible to bots. */}
                 <input
                   type="text"

@@ -282,9 +282,9 @@ export function Experience() {
         <div className="relative z-20 px-6 sm:px-10 md:px-16 lg:px-24 pt-10 sm:pt-14 shrink-0">
           <div className="max-w-7xl mx-auto flex items-end justify-between gap-6">
             <div className="space-y-2">
-              <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+              {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
                 02 &bull; Experience
-              </span>
+              </span> */}
               <h2
                 className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
                 style={{
@@ -500,7 +500,9 @@ export function Experience() {
                                 className="h-3.5 w-3.5 mt-0.5 shrink-0"
                                 style={{ color: entry.accentColor }}
                               />
-                              <span className="leading-relaxed">{activity}</span>
+                              <span className="leading-relaxed">
+                                {activity}
+                              </span>
                             </li>
                           ))}
                         </ul>

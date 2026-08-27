@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState } from "react";
 import {
   Terminal,
   Layout,
@@ -14,10 +14,8 @@ import {
   Palette,
   Wrench,
   Sparkles,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
-import { usePinnedTrack } from "../hooks/usePinnedTrack";
+import { Marquee } from "./Marquee";
 
 export interface SkillCategory {
   id: string;
@@ -220,152 +218,30 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
   },
 ];
 
-/** Card size per breakpoint, and how far a card may sit from the stage centre
- *  before it is fully dimmed. */
-interface RailGeometry {
-  cardWidth: number;
-  cardHeight: number;
-  falloff: number;
-}
-
-// falloff is ~1.4x the card pitch (width + gap): the centred card is sharp, its
-// neighbour sits about half-dim, and anything beyond fades out. Much wider and
-// every card is half-blurred at once, which reads as slow to focus.
-const RAIL_DESKTOP: RailGeometry = {
-  cardWidth: 320,
-  cardHeight: 380,
-  falloff: 490,
-};
-const RAIL_TABLET: RailGeometry = {
-  cardWidth: 280,
-  cardHeight: 360,
-  falloff: 430,
-};
-const RAIL_MOBILE: RailGeometry = {
-  cardWidth: 240,
-  cardHeight: 340,
-  falloff: 360,
-};
-
 export function Skills() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  // Whichever card the reader is pointing at (or tabbed to) drives the panel.
+  // Falls back to the first so the panel is never empty on load.
+  const [focusedId, setFocusedId] = useState<string>(SKILL_CATEGORIES[0].id);
 
-  const [rail, setRail] = useState<RailGeometry>(RAIL_DESKTOP);
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [focus, setFocus] = useState<number[]>(() =>
-    SKILL_CATEGORIES.map((_, index) => (index === 0 ? 1 : 0)),
-  );
-
-  const total = SKILL_CATEGORIES.length;
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(query.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    query.addEventListener("change", onChange);
-    return () => query.removeEventListener("change", onChange);
-  }, []);
-
-  useEffect(() => {
-    const pick = () => {
-      const w = window.innerWidth;
-      setRail(w < 640 ? RAIL_MOBILE : w < 1024 ? RAIL_TABLET : RAIL_DESKTOP);
-    };
-    pick();
-    window.addEventListener("resize", pick);
-    return () => window.removeEventListener("resize", pick);
-  }, []);
-
-  // 13 cards at 1:1 meant ~4,500px of scrolling before the page moved on.
-  // 0.5 halves that and doubles how fast the rail travels per scroll.
-  const { distance, progress, offset, sectionHeight } = usePinnedTrack(
-    sectionRef,
-    trackRef,
-    !reducedMotion,
-    0.5,
-  );
-
-  /** Lets the first and last card reach the middle of the stage. */
-  const endPadding = `calc(50vw - ${rail.cardWidth / 2}px)`;
-
-  // Emphasis follows distance from the centre of the stage, so the card being
-  // read is the sharp one and its neighbours fall away gently.
-  useEffect(() => {
-    const centre = window.innerWidth / 2;
-    let nearest = 0;
-    let best = Infinity;
-
-    const next = cardRefs.current.map((card, index) => {
-      if (!card) return 0;
-      const rect = card.getBoundingClientRect();
-      const delta = Math.abs(rect.left + rect.width / 2 - centre);
-      if (delta < best) {
-        best = delta;
-        nearest = index;
-      }
-      return Math.max(0, 1 - delta / rail.falloff);
-    });
-
-    setFocus(next);
-    setActiveIndex(nearest);
-  }, [offset, rail]);
-
-  const activeCategory = SKILL_CATEGORIES[activeIndex];
-
-  /** Scroll the page so `index` comes to rest in the middle of the stage. */
-  const goToIndex = useCallback(
-    (index: number) => {
-      const section = sectionRef.current;
-      const card = cardRefs.current[index];
-      if (!section || !card || distance <= 0) return;
-
-      const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-      const cardCentre =
-        card.offsetLeft + card.offsetWidth / 2 - window.innerWidth / 2;
-      const target = Math.min(1, Math.max(0, cardCentre / distance));
-
-      window.scrollTo({
-        top: sectionTop + target * distance,
-        behavior: reducedMotion ? "auto" : "smooth",
-      });
-    },
-    [distance, reducedMotion],
-  );
-
-  const onKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
-        goToIndex(Math.min(total - 1, activeIndex + 1));
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        goToIndex(Math.max(0, activeIndex - 1));
-      }
-    },
-    [activeIndex, goToIndex, total],
-  );
+  const focused =
+    SKILL_CATEGORIES.find((category) => category.id === focusedId) ??
+    SKILL_CATEGORIES[0];
 
   return (
     <section
-      ref={sectionRef}
       id="skills"
-      className="relative bg-[#030407] text-[#e4e4e7]"
-      style={{ height: sectionHeight }}
+      className="relative py-24 sm:py-28 bg-[#030407] text-[#e4e4e7] overflow-hidden"
     >
-      {/* Pinned stage — releases itself once the rail is exhausted. */}
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col">
-        {/* Ambient wash tinted by the focused category */}
-        <div
-          aria-hidden="true"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[560px] rounded-full blur-[160px] opacity-20 pointer-events-none transition-colors duration-700"
-          style={{ backgroundColor: activeCategory.accentColor }}
-        />
+      {/* Ambient wash tinted by the focused category */}
+      <div
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[520px] rounded-full blur-[160px] opacity-20 pointer-events-none transition-colors duration-700"
+        style={{ backgroundColor: focused.accentColor }}
+      />
 
+      <div className="relative">
         {/* Header */}
-        <div className="relative z-20 px-4 sm:px-8 md:px-12 lg:px-20 pt-10 sm:pt-14 shrink-0">
+        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mb-10">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.06] pb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-teal-400 uppercase">
@@ -386,227 +262,124 @@ export function Skills() {
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-400 shrink-0">
               <span className="h-2 w-2 rounded-full bg-teal-400" />
               <span>
-                {total} Domains &bull; Scroll to explore &rarr;
+                {SKILL_CATEGORIES.length} Domains &bull; Hover to pause
               </span>
             </div>
           </div>
         </div>
 
-        {/* Horizontal rail */}
-        <div
-          role="group"
-          aria-roledescription="carousel"
-          aria-label="Technical skill categories"
-          tabIndex={0}
-          onKeyDown={onKeyDown}
-          className={`relative z-10 my-auto min-h-0 outline-none focus-visible:ring-1 focus-visible:ring-teal-400/40 ${
-            reducedMotion ? "overflow-x-auto" : ""
-          }`}
-        >
-          <div
-            ref={trackRef}
-            className="flex items-center gap-5 sm:gap-7 w-max py-6"
-            style={{
-              paddingLeft: endPadding,
-              paddingRight: endPadding,
-              transform: reducedMotion
-                ? undefined
-                : `translate3d(${offset}px, 0, 0)`,
-              willChange: "transform",
-            }}
-          >
-            {SKILL_CATEGORIES.map((category, index) => {
-              const Icon = category.icon;
-              const sharpness = focus[index] ?? 0;
-              const isActive = index === activeIndex;
+        {/* Auto-scrolling rail */}
+        <Marquee duration={70}>
+          {SKILL_CATEGORIES.map((category) => {
+            const Icon = category.icon;
+            const isFocused = category.id === focused.id;
 
-              return (
-                <button
-                  key={category.id}
-                  type="button"
-                  ref={(node) => {
-                    cardRefs.current[index] = node;
-                  }}
-                  onClick={() => goToIndex(index)}
-                  aria-current={isActive ? "true" : undefined}
-                  aria-label={`${category.name}: ${category.skills.join(", ")}`}
-                  className="shrink-0 text-left cursor-pointer"
+            return (
+              <button
+                key={category.id}
+                type="button"
+                onMouseEnter={() => setFocusedId(category.id)}
+                onFocus={() => setFocusedId(category.id)}
+                aria-label={`${category.name}: ${category.skills.join(", ")}`}
+                // Spacing lives here, not as a flex gap — see Marquee.
+                className="mr-5 sm:mr-7 w-[240px] sm:w-[280px] lg:w-[320px] h-[340px] sm:h-[360px] lg:h-[380px] shrink-0 text-left cursor-pointer"
+              >
+                <div
+                  className="h-full rounded-2xl border bg-[#080a10]/90 backdrop-blur-md p-5 flex flex-col gap-3 overflow-hidden shadow-[0_25px_60px_-20px_rgba(0,0,0,0.9)] transition-colors duration-300"
                   style={{
-                    width: `${rail.cardWidth}px`,
-                    height: `${rail.cardHeight}px`,
-                    opacity: reducedMotion ? 1 : 0.3 + 0.7 * sharpness,
-                    transform: reducedMotion
-                      ? undefined
-                      : `scale(${0.9 + 0.1 * sharpness})`,
-                    filter: reducedMotion
-                      ? undefined
-                      : `blur(${(1 - sharpness) * 1.6}px)`,
-                    // Focus is recomputed every scroll frame, so a long
-                    // transition just lags behind the pointer. Keep it short
-                    // enough to only smooth the jumps from dot/arrow jumps.
-                    transition: reducedMotion
-                      ? "none"
-                      : "opacity 120ms linear, transform 120ms ease-out, filter 120ms linear",
-                    willChange: "transform, opacity",
+                    borderColor: isFocused
+                      ? `${category.accentColor}66`
+                      : "rgba(255,255,255,0.08)",
+                    boxShadow: isFocused
+                      ? `0 0 40px -12px ${category.accentColor}59, 0 25px 60px -20px rgba(0,0,0,0.9)`
+                      : undefined,
                   }}
                 >
-                  <div
-                    className="h-full rounded-2xl border bg-[#080a10]/90 backdrop-blur-md p-5 flex flex-col gap-3 overflow-hidden shadow-[0_25px_60px_-20px_rgba(0,0,0,0.9)]"
-                    style={{
-                      borderColor: isActive
-                        ? `${category.accentColor}66`
-                        : "rgba(255,255,255,0.08)",
-                      boxShadow: isActive
-                        ? `0 0 40px -12px ${category.accentColor}59, 0 25px 60px -20px rgba(0,0,0,0.9)`
-                        : undefined,
-                    }}
-                  >
-                    <div className="flex items-center justify-between shrink-0">
-                      <span className="font-mono text-[11px] tracking-widest text-zinc-500">
-                        {category.number}
-                      </span>
-                      <span
-                        className="h-8 w-8 rounded-lg grid place-items-center border"
-                        style={{
-                          borderColor: `${category.accentColor}33`,
-                          backgroundColor: `${category.accentColor}1a`,
-                        }}
-                      >
-                        <Icon
-                          className="h-4 w-4"
-                          style={{ color: category.accentColor }}
-                        />
-                      </span>
-                    </div>
-
-                    <div className="space-y-1 shrink-0">
-                      <h3 className="font-sans text-base sm:text-lg font-semibold text-white leading-snug">
-                        {category.name}
-                      </h3>
-                      <p className="font-sans text-[11px] leading-relaxed text-zinc-400">
-                        {category.tagline}
-                      </p>
-                    </div>
-
-                    <div className="h-px bg-white/[0.08] shrink-0" />
-
-                    {/* Longer lists are cut off behind a fade — the panel below
-                        the rail always carries the full list. */}
-                    <div className="relative flex-1 min-h-0">
-                      <div className="flex flex-wrap gap-1.5 h-full overflow-hidden content-start">
-                        {category.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[9.5px] leading-tight text-zinc-300"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                      <div
-                        aria-hidden="true"
-                        className="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#080a10] to-transparent"
+                  <div className="flex items-center justify-between shrink-0">
+                    <span className="font-mono text-[11px] tracking-widest text-zinc-500">
+                      {category.number}
+                    </span>
+                    <span
+                      className="h-8 w-8 rounded-lg grid place-items-center border"
+                      style={{
+                        borderColor: `${category.accentColor}33`,
+                        backgroundColor: `${category.accentColor}1a`,
+                      }}
+                    >
+                      <Icon
+                        className="h-4 w-4"
+                        style={{ color: category.accentColor }}
                       />
-                    </div>
+                    </span>
                   </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* Full skill list for the focused category */}
-        <div className="relative z-20 px-4 sm:px-8 md:px-12 lg:px-20 shrink-0">
-          <div
-            aria-live="polite"
-            className="max-w-3xl mx-auto min-h-[68px] flex flex-wrap items-start justify-center gap-1.5"
-          >
-            {activeCategory.skills.map((skill) => (
-              <span
-                key={`${activeCategory.id}-${skill}`}
-                className="rounded-full border px-2.5 py-1 font-mono text-[10px] leading-tight text-zinc-300"
-                style={{
-                  borderColor: `${activeCategory.accentColor}33`,
-                  backgroundColor: `${activeCategory.accentColor}12`,
-                }}
-              >
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
+                  <div className="space-y-1 shrink-0">
+                    <h3 className="font-sans text-base sm:text-lg font-semibold text-white leading-snug">
+                      {category.name}
+                    </h3>
+                    <p className="font-sans text-[11px] leading-relaxed text-zinc-400">
+                      {category.tagline}
+                    </p>
+                  </div>
 
-        {/* Position readout + direct navigation */}
-        <div className="relative z-20 px-4 sm:px-8 md:px-12 lg:px-20 pb-10 sm:pb-12 mt-4 shrink-0">
-          <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-px bg-white/[0.08] shrink-0" />
+
+                  {/* Longer lists are cut off behind a fade — the panel below
+                      the rail always carries the full list. */}
+                  <div className="relative flex-1 min-h-0">
+                    <div className="flex flex-wrap gap-1.5 h-full overflow-hidden content-start">
+                      {category.skills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[9.5px] leading-tight text-zinc-300"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#080a10] to-transparent"
+                    />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </Marquee>
+
+        {/* Full skill list for whichever card is being pointed at */}
+        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mt-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-3">
               <span
                 className="font-mono text-xs tabular-nums"
-                style={{ color: activeCategory.accentColor }}
+                style={{ color: focused.accentColor }}
               >
-                {activeCategory.number} / {String(total).padStart(2, "0")}
+                {focused.number}
               </span>
-              <span className="truncate font-sans text-sm text-zinc-300">
-                {activeCategory.name}
+              <span className="font-sans text-sm text-zinc-300">
+                {focused.name}
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => goToIndex(Math.max(0, activeIndex - 1))}
-                disabled={activeIndex === 0}
-                aria-label="Previous skill category"
-                className="h-8 w-8 grid place-items-center rounded-full border border-white/[0.08] bg-white/[0.03] text-zinc-300 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </button>
-
-              <div className="hidden sm:flex items-center gap-1.5 px-1">
-                {SKILL_CATEGORIES.map((category, index) => (
-                  <button
-                    key={category.id}
-                    type="button"
-                    onClick={() => goToIndex(index)}
-                    aria-label={`Show ${category.name}`}
-                    aria-current={index === activeIndex ? "true" : undefined}
-                    className="p-1 cursor-pointer"
-                  >
-                    <span
-                      className="block h-1.5 rounded-full transition-all duration-300"
-                      style={{
-                        width: index === activeIndex ? "22px" : "6px",
-                        backgroundColor:
-                          index === activeIndex
-                            ? category.accentColor
-                            : "#3f3f46",
-                      }}
-                    />
-                  </button>
-                ))}
-              </div>
-
-              <button
-                type="button"
-                onClick={() => goToIndex(Math.min(total - 1, activeIndex + 1))}
-                disabled={activeIndex === total - 1}
-                aria-label="Next skill category"
-                className="h-8 w-8 grid place-items-center rounded-full border border-white/[0.08] bg-white/[0.03] text-zinc-300 hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          {/* Rail progress */}
-          <div className="max-w-7xl mx-auto mt-3 h-px bg-white/[0.07]">
             <div
-              className="h-px transition-colors duration-500"
-              style={{
-                width: `${progress * 100}%`,
-                backgroundColor: activeCategory.accentColor,
-              }}
-            />
+              aria-live="polite"
+              className="mt-4 min-h-[68px] flex flex-wrap items-start justify-center gap-1.5"
+            >
+              {focused.skills.map((skill) => (
+                <span
+                  key={`${focused.id}-${skill}`}
+                  className="rounded-full border px-2.5 py-1 font-mono text-[10px] leading-tight text-zinc-300"
+                  style={{
+                    borderColor: `${focused.accentColor}33`,
+                    backgroundColor: `${focused.accentColor}12`,
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </div>

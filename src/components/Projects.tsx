@@ -104,9 +104,9 @@ export function Projects() {
         {/* Header row */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
           <div className="space-y-2">
-            <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+            {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
               03 &bull; Projects
-            </span>
+            </span> */}
             <h2
               className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
               style={{

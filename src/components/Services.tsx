@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
 import {
   Activity,
   Bot,
@@ -9,6 +8,7 @@ import {
   Server,
   Zap,
 } from "lucide-react";
+import { Marquee } from "./Marquee";
 
 interface ServiceItem {
   id: string;
@@ -136,566 +136,212 @@ const SERVICES: ServiceItem[] = [
   },
 ];
 
+/** Per-service glyph, keyed by id so the data stays untouched. */
+const SERVICE_ICONS: Record<string, typeof Layers> = {
+  "software-development": Layers,
+  "ai-full-stack-engineer": Bot,
+  "backend-engineer": Server,
+  "data-analyst": Activity,
+  "data-architect": Database,
+  "ai-systems-automation": Zap,
+  "tech-support-observability": Cloud,
+};
+
+/**
+ * The data carries glow colours as low-alpha rgba, which is too faint for text
+ * or borders. Strip the alpha to recover the solid hue.
+ */
+function solidHue(rgba: string): string {
+  const parts = rgba.match(/[\d.]+/g);
+  if (!parts || parts.length < 3) return "#2dd4bf";
+  return `rgb(${parts[0]}, ${parts[1]}, ${parts[2]})`;
+}
+
 interface ServicesProps {
   onContactClick?: () => void;
 }
 
 export function Services({ onContactClick }: ServicesProps) {
-  const containerRef = useRef<HTMLElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [focusedId, setFocusedId] = useState<string>(SERVICES[0].id);
 
-  // Track the active service off live geometry rather than a cached scroll
-  // measurement: the hero above this section changes height as its portrait and
-  // fonts load, which leaves any measurement taken at mount permanently skewed.
-  useEffect(() => {
-    let frame = 0;
-
-    const measure = () => {
-      frame = 0;
-      const el = containerRef.current;
-      if (!el) return;
-
-      const scrollable = el.offsetHeight - window.innerHeight;
-      if (scrollable <= 0) return;
-
-      // rect.top is 0 when the track starts and -scrollable when it ends.
-      const progress = -el.getBoundingClientRect().top / scrollable;
-      const next = Math.min(
-        SERVICES.length - 1,
-        Math.max(0, Math.floor(progress * SERVICES.length)),
-      );
-
-      setActiveIndex((current) => (current === next ? current : next));
-    };
-
-    const onScroll = () => {
-      if (frame) return;
-      frame = requestAnimationFrame(measure);
-    };
-
-    measure();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-
-    return () => {
-      if (frame) cancelAnimationFrame(frame);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-
-  const currentService = SERVICES[activeIndex];
-
-  const scrollToService = useCallback((index: number) => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const stepHeight = (el.offsetHeight - window.innerHeight) / SERVICES.length;
-    // Land mid-step so the target index is unambiguous.
-    const targetScroll = top + stepHeight * (index + 0.5);
-
-    window.scrollTo({ top: targetScroll, behavior: "smooth" });
-  }, []);
+  const focused =
+    SERVICES.find((service) => service.id === focusedId) ?? SERVICES[0];
+  const focusedHue = solidHue(focused.ambientGlow);
 
   return (
     <section
-      ref={containerRef}
       id="services"
-      className="relative h-[700vh] bg-[#030407] text-[#e4e4e7]"
+      className="relative py-24 sm:py-28 bg-[#030407] text-[#e4e4e7] overflow-hidden"
     >
-      {/* Sticky Fullscreen Presentation Frame */}
-      <div className="sticky top-0 h-screen w-full flex flex-col justify-between overflow-hidden px-6 sm:px-10 md:px-16 lg:px-24 py-8 sm:py-12 select-none">
-        {/* Subtle Horizontal Laser / Ambient Glow Beam */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-          {/* Glowing horizontal laser streak across center */}
-          <div className="absolute top-[50%] inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent blur-[1px]" />
-          <div className="absolute top-[50%] inset-x-0 h-20 bg-gradient-to-r from-transparent via-teal-500/10 to-transparent blur-2xl" />
+      {/* Ambient wash tinted by the focused service */}
+      <div
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[820px] h-[520px] rounded-full blur-[160px] opacity-20 pointer-events-none transition-colors duration-700"
+        style={{ backgroundColor: focusedHue }}
+      />
 
-          {/* Dynamic Responsive Ambient Orb */}
-          <motion.div
-            animate={{
-              backgroundColor: currentService.ambientGlow,
-              x: activeIndex % 2 === 0 ? "-10%" : "12%",
-              y: activeIndex < 3 ? "-6%" : "8%",
-            }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[520px] w-[520px] sm:h-[680px] sm:w-[680px] rounded-full blur-[140px] opacity-70 will-change-transform"
-          />
-
-          {/* Edge Vignettes */}
-          <div className="absolute inset-0 bg-radial from-transparent via-[#030407]/30 to-[#030407] pointer-events-none" />
-          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#030407] to-transparent pointer-events-none" />
-          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#030407] to-transparent pointer-events-none" />
-        </div>
-
-        {/* Section Header (Editorial Italic Serif "Services" + "Where I put that to work") */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full pt-2 sm:pt-4">
-          <h2
-            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl italic font-normal text-white tracking-tight leading-none"
-            style={{
-              fontFamily:
-                "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
-            }}
-          >
-            Services
-          </h2>
-          <p className="font-sans text-sm sm:text-base md:text-lg font-normal text-zinc-300 mt-2 tracking-normal">
-            Where I put that to work
-          </p>
-        </div>
-
-        {/* Main Content Layout: Left Dynamic Visuals + Right Storytelling Column */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full my-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-          {/* Left Column: Rich Dark Visual / Mockup Canvas that smoothly crossfades */}
-          <div className="lg:col-span-6 hidden md:flex items-center justify-center">
-            <div className="relative w-full max-w-[480px] aspect-[4/3.5] rounded-2xl bg-[#090b11]/85 border border-white/[0.08] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] overflow-hidden p-6 flex flex-col justify-between backdrop-blur-md">
-              {/* Inner ambient glow */}
-              <div
-                className="absolute inset-0 transition-opacity duration-700 pointer-events-none opacity-30"
+      <div className="relative">
+        {/* Header */}
+        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mb-10">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.06] pb-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-teal-400 uppercase">
+                {/* <Zap className="h-3.5 w-3.5" /> */}
+                {/* <span>Services</span> */}
+              </div>
+              <h2
+                className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-tight"
                 style={{
-                  background: `radial-gradient(circle at 70% 30%, ${currentService.ambientGlow}, transparent 70%)`,
+                  fontFamily:
+                    "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
                 }}
-              />
+              >
+                Where I put that to work
+              </h2>
+            </div>
 
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentService.id}
-                  initial={{ opacity: 0, scale: 0.96, y: 10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.98, y: -10 }}
-                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                  className="relative z-10 h-full flex flex-col justify-between"
-                >
-                  {/* Top Mockup Toolbar Header */}
-                  <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.07]">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1.5 mr-2">
-                        <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
-                        <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
-                      </div>
-                      <span className="text-[11px] font-mono text-zinc-400">
-                        {currentService.id}.workspace
-                      </span>
-                    </div>
-
-                    <span className="text-[10px] font-mono uppercase tracking-wider text-teal-400 bg-teal-500/10 border border-teal-500/20 px-2.5 py-0.5 rounded-full">
-                      {currentService.badge}
-                    </span>
-                  </div>
-
-                  {/* Bespoke Interactive UI / Node Graphic for each of the 6 Services */}
-                  <div className="my-auto py-2">
-                    {activeIndex === 0 && (
-                      /* 01: Web & Frontend Development */
-                      <div className="space-y-3 font-mono text-xs">
-                        <div className="rounded-xl bg-black/60 border border-white/[0.08] p-3.5 space-y-2.5">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-zinc-200 flex items-center gap-1.5">
-                              <Layers className="h-3.5 w-3.5 text-indigo-400" />
-                              <span>ZustandStore.tsx</span>
-                            </span>
-                            <span className="text-indigo-400">
-                              60 FPS &bull; Fast
-                            </span>
-                          </div>
-
-                          {/* Visual Design Tokens & Spring Physics Blocks */}
-                          <div className="grid grid-cols-4 gap-1.5 py-1">
-                            <div className="h-6 rounded bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-[9px] text-indigo-200">
-                              #Next15
-                            </div>
-                            <div className="h-6 rounded bg-teal-500/20 border border-teal-500/30 flex items-center justify-center text-[9px] text-teal-200">
-                              #TypeScript
-                            </div>
-                            <div className="h-6 rounded bg-sky-500/20 border border-sky-500/30 flex items-center justify-center text-[9px] text-sky-200">
-                              #Zustand
-                            </div>
-                            <div className="h-6 rounded bg-purple-500/20 border border-purple-500/30 flex items-center justify-center text-[9px] text-purple-200">
-                              #WCAG_AA
-                            </div>
-                          </div>
-
-                          <p className="text-[11px] font-sans text-zinc-400">
-                            Fast, accessible, and type-safe component systems
-                            with responsive state sync.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Lighthouse Score
-                            </span>
-                            <span className="text-white font-semibold">
-                              100 / 100
-                            </span>
-                          </div>
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Accessibility
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              WCAG AA Pass
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeIndex === 1 && (
-                      /* 02: API & Backend Systems */
-                      <div className="space-y-3 font-mono text-xs">
-                        <div className="rounded-xl bg-black/60 border border-white/[0.08] p-3.5 space-y-2.5">
-                          <div className="flex items-center justify-between text-zinc-400 text-[11px]">
-                            <span className="text-zinc-200 flex items-center gap-1.5">
-                              <Server className="h-3.5 w-3.5 text-sky-400" />
-                              <span>fastapi_auth_router.py</span>
-                            </span>
-                            <span className="text-emerald-400">
-                              HTTP 200 &bull; 8ms
-                            </span>
-                          </div>
-                          <div className="h-1.5 w-full bg-white/[0.05] rounded-full overflow-hidden">
-                            <div className="h-full w-4/5 bg-sky-400/80 rounded-full" />
-                          </div>
-                          <p className="text-[11px] font-sans text-zinc-400">
-                            JWT/OAuth secure token verification with sub-10ms
-                            Redis caching tier.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Throughput
-                            </span>
-                            <span className="text-white font-semibold">
-                              15,000 req/s
-                            </span>
-                          </div>
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Cache Hit Rate
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              96.4%
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeIndex === 2 && (
-                      /* 03: Cloud & DevOps */
-                      <div className="space-y-3 font-mono text-xs">
-                        <div className="rounded-xl bg-black/60 border border-white/[0.08] p-3.5 space-y-2.5">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-zinc-200 flex items-center gap-1.5">
-                              <Cloud className="h-3.5 w-3.5 text-teal-400" />
-                              <span>aws-cdk-pipeline.yml</span>
-                            </span>
-                            <span className="text-teal-400">AWS + Docker</span>
-                          </div>
-
-                          {/* Node Connectors */}
-                          <div className="flex items-center justify-between text-[10px] bg-white/[0.02] p-2 rounded-lg border border-white/[0.04]">
-                            <span className="text-zinc-300">
-                              Lambda &bull; S3 &bull; EC2 Fargate
-                            </span>
-                            <span className="text-emerald-400">
-                              &bull; Passing
-                            </span>
-                          </div>
-
-                          <p className="text-[11px] font-sans text-zinc-400">
-                            Automated GitHub Actions CI/CD with immutable
-                            containerized artifacts.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Build/Deploy Time
-                            </span>
-                            <span className="text-white font-semibold">
-                              &lt; 2.5 Mins
-                            </span>
-                          </div>
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Rollback SLA
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              Instant (0s)
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeIndex === 3 && (
-                      /* 04: Database Architecture */
-                      <div className="space-y-3 font-mono text-xs">
-                        <div className="rounded-xl bg-black/60 border border-white/[0.08] p-3.5 space-y-2.5">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-zinc-200 flex items-center gap-1.5">
-                              <Database className="h-3.5 w-3.5 text-amber-400" />
-                              <span>schema_rls_policy.sql</span>
-                            </span>
-                            <span className="text-amber-400">PostgreSQL</span>
-                          </div>
-
-                          <div className="text-[10px] text-zinc-400 space-y-1 font-mono">
-                            <div className="text-emerald-400">
-                              ✓ Row-Level Security Enforced
-                            </div>
-                            <div className="text-zinc-300">
-                              ✓ B-Tree Composite Index Active
-                            </div>
-                          </div>
-
-                          <p className="text-[11px] font-sans text-zinc-400">
-                            Normalized schema design, atomic transaction safety,
-                            and migration planning.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Query Time
-                            </span>
-                            <span className="text-white font-semibold">
-                              &lt; 4ms Index Scan
-                            </span>
-                          </div>
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Data Integrity
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              100% ACID
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeIndex === 4 && (
-                      /* 05: Technical Support, Monitoring & Observability */
-                      <div className="space-y-3 font-mono text-xs">
-                        <div className="rounded-xl bg-black/60 border border-white/[0.08] p-3.5 space-y-2.5">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-zinc-200 flex items-center gap-1.5">
-                              <Activity className="h-3.5 w-3.5 text-purple-400" />
-                              <span>itil_incident_stream.log</span>
-                            </span>
-                            <span className="text-purple-400">
-                              Observability
-                            </span>
-                          </div>
-
-                          <div className="text-[10px] text-zinc-400 space-y-1 font-mono">
-                            <div className="text-emerald-400">
-                              [Resolved] Zero Production Deadlocks
-                            </div>
-                            <div className="text-zinc-300">
-                              [SOP] Automated Diagnostic Runbook Executed
-                            </div>
-                          </div>
-
-                          <p className="text-[11px] font-sans text-zinc-400">
-                            Root-cause incident triage, real-time health
-                            metrics, and comprehensive SOPs.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              SLA Compliance
-                            </span>
-                            <span className="text-white font-semibold">
-                              99.9% Uptime
-                            </span>
-                          </div>
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              MTTR
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              &lt; 10 Mins
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-
-                    {activeIndex === 5 && (
-                      /* 06: AI-Powered Systems & Automation */
-                      <div className="space-y-3 font-mono text-xs">
-                        <div className="rounded-xl bg-black/60 border border-white/[0.08] p-3.5 space-y-2.5">
-                          <div className="flex items-center justify-between text-[11px]">
-                            <span className="text-zinc-200 flex items-center gap-1.5">
-                              <Bot className="h-3.5 w-3.5 text-pink-400" />
-                              <span>langgraph_agent_pipeline.py</span>
-                            </span>
-                            <span className="text-pink-400">RAG Agent</span>
-                          </div>
-
-                          <div className="text-[10px] text-zinc-400 space-y-1 font-mono">
-                            <div className="text-emerald-400">
-                              ✓ Vector Store Retrieval &bull; Top-k: 5
-                            </div>
-                            <div className="text-zinc-300">
-                              ✓ Autonomous Tool Call Executed
-                            </div>
-                          </div>
-
-                          <p className="text-[11px] font-sans text-zinc-400">
-                            Multi-agent orchestration (LangGraph, AWS Bedrock)
-                            and workflow automation.
-                          </p>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2 text-[11px]">
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Time Saved
-                            </span>
-                            <span className="text-white font-semibold">
-                              85%+ Manual Work
-                            </span>
-                          </div>
-                          <div className="rounded-lg bg-white/[0.03] border border-white/[0.05] p-2.5">
-                            <span className="text-[10px] text-zinc-500 block uppercase font-sans">
-                              Accuracy
-                            </span>
-                            <span className="text-emerald-400 font-semibold">
-                              Grounded / Cited
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Bottom Footer Details */}
-                  <div className="flex items-center justify-between pt-3 border-t border-white/[0.07] text-[11px] text-zinc-400 font-mono">
-                    <span className="flex items-center gap-1.5">
-                      <Zap className="h-3 w-3 text-teal-400" />
-                      <span>{currentService.title}</span>
-                    </span>
-                    <span>Ready for Production</span>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-400 shrink-0">
+              <span className="h-2 w-2 rounded-full bg-teal-400" />
+              <span>{SERVICES.length} Disciplines &bull; Hover to pause</span>
             </div>
           </div>
+        </div>
 
-          {/* Right Column: Clean, Non-Overlapping Scroll-Driven Storytelling */}
-          <div className="lg:col-span-6 flex flex-col justify-center">
-            {/* Dynamic Service Text with AnimatePresence mode="wait" to eliminate ghosting/overlap */}
-            <div className="min-h-[260px] sm:min-h-[320px] md:min-h-[330px] flex flex-col justify-center">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={currentService.id}
-                  initial={{ opacity: 0, y: 16, filter: "blur(3px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -16, filter: "blur(3px)" }}
-                  transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-                  className="space-y-4"
+        {/* Auto-scrolling rail */}
+        <Marquee duration={55}>
+          {SERVICES.map((service) => {
+            const Icon = SERVICE_ICONS[service.id] ?? Layers;
+            const hue = solidHue(service.ambientGlow);
+            const isFocused = service.id === focused.id;
+
+            return (
+              <button
+                key={service.id}
+                type="button"
+                onMouseEnter={() => setFocusedId(service.id)}
+                onFocus={() => setFocusedId(service.id)}
+                aria-label={`${service.title}: ${service.features.join(", ")}`}
+                // Spacing lives here, not as a flex gap — see Marquee.
+                className="mr-5 sm:mr-7 w-[240px] sm:w-[280px] lg:w-[320px] h-[340px] sm:h-[360px] lg:h-[380px] shrink-0 text-left cursor-pointer"
+              >
+                <div
+                  className="h-full rounded-2xl border bg-[#080a10]/90 backdrop-blur-md p-5 flex flex-col gap-3 overflow-hidden shadow-[0_25px_60px_-20px_rgba(0,0,0,0.9)] transition-colors duration-300"
+                  style={{
+                    borderColor: isFocused
+                      ? `${hue.replace("rgb", "rgba").replace(")", ", 0.4)")}`
+                      : "rgba(255,255,255,0.08)",
+                    boxShadow: isFocused
+                      ? `0 0 40px -12px ${hue.replace("rgb", "rgba").replace(")", ", 0.35)")}, 0 25px 60px -20px rgba(0,0,0,0.9)`
+                      : undefined,
+                  }}
                 >
-                  {/* Service Title (Clean, bold, prominent) */}
-                  <h3 className="font-sans text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-white leading-tight">
-                    {currentService.title}
-                  </h3>
-
-                  {/* Concise Description Paragraph */}
-                  <p className="font-sans text-xs sm:text-sm md:text-base text-zinc-300 font-normal leading-relaxed max-w-xl">
-                    {currentService.description}
-                  </p>
-
-                  {/* Subtle Divider Line */}
-                  <div className="w-full h-px bg-white/[0.12] my-4" />
-
-                  {/* Features List with `// ` prefix */}
-                  <div className="space-y-2 font-sans">
-                    {currentService.features.map((feature, fIdx) => (
-                      <div
-                        key={fIdx}
-                        className="flex items-center gap-2 text-xs sm:text-sm text-zinc-300 font-normal tracking-wide"
-                      >
-                        <span className="font-mono text-teal-400 font-medium select-none">
-                          //
-                        </span>
-                        <span>{feature}</span>
-                      </div>
-                    ))}
+                  <div className="flex items-center justify-between shrink-0">
+                    <span className="font-mono text-[11px] tracking-widest text-zinc-500">
+                      {service.number}
+                    </span>
+                    <span
+                      className="h-8 w-8 rounded-lg grid place-items-center border"
+                      style={{
+                        borderColor: hue
+                          .replace("rgb", "rgba")
+                          .replace(")", ", 0.2)"),
+                        backgroundColor: service.ambientGlow,
+                      }}
+                    >
+                      <Icon className="h-4 w-4" style={{ color: hue }} />
+                    </span>
                   </div>
-                </motion.div>
-              </AnimatePresence>
+
+                  <div className="space-y-1 shrink-0">
+                    <h3 className="font-sans text-base sm:text-lg font-semibold text-white leading-snug">
+                      {service.title}
+                    </h3>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                      {service.badge}
+                    </p>
+                  </div>
+
+                  <div className="h-px bg-white/[0.08] shrink-0" />
+
+                  {/* Longer lists are cut off behind a fade — the panel below
+                      the rail always carries the full list. */}
+                  <div className="relative flex-1 min-h-0">
+                    <div className="flex flex-wrap gap-1.5 h-full overflow-hidden content-start">
+                      {service.features.map((feature) => (
+                        <span
+                          key={feature}
+                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[9.5px] leading-tight text-zinc-300"
+                        >
+                          {feature}
+                        </span>
+                      ))}
+                    </div>
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-[#080a10] to-transparent"
+                    />
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </Marquee>
+
+        {/* Full detail for whichever card is being pointed at */}
+        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mt-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-3">
+              <span
+                className="font-mono text-xs tabular-nums"
+                style={{ color: focusedHue }}
+              >
+                {focused.number}
+              </span>
+              <span className="font-sans text-sm text-zinc-300">
+                {focused.title}
+              </span>
             </div>
 
-            {/* Persistent Section Skeleton: Single Contact Button & Step Navigation */}
-            <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between gap-4 mt-2">
-              {/* Persistent Neon Blue Glowing Contact Button */}
-              <div className="relative inline-flex items-center justify-center">
-                <button
-                  onClick={onContactClick}
-                  data-cursor-text="TALK"
-                  className="neon-blue-btn relative rounded-full px-8 py-2.5 text-xs sm:text-sm font-medium tracking-wide text-white cursor-pointer select-none"
-                >
-                  <span className="relative z-10 font-normal">Contact</span>
+            <div aria-live="polite">
+              <p className="mt-4 text-sm leading-relaxed text-zinc-400">
+                {focused.description}
+              </p>
 
-                  {/* Glowing accent indicator dot at the bottom center */}
+              {/* <div className="mt-5 min-h-[68px] flex flex-wrap items-start justify-center gap-1.5">
+                {focused.features.map((feature) => (
                   <span
-                    className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-[#c9ab86] shadow-[0_0_8px_rgba(201,171,134,0.8)] border border-[#dfc3a2] pointer-events-none"
-                    aria-hidden="true"
-                  />
-                </button>
-              </div>
-
-              {/* Step Navigation Dots for all 6 services */}
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono text-zinc-500 mr-2">
-                  {String(activeIndex + 1).padStart(2, "0")} /{" "}
-                  {String(SERVICES.length).padStart(2, "0")}
-                </span>
-                {SERVICES.map((s, idx) => (
-                  <button
-                    key={s.id}
-                    onClick={() => scrollToService(idx)}
-                    className="group p-1 cursor-pointer"
-                    aria-label={`Jump to ${s.title}`}
-                    aria-current={idx === activeIndex ? "step" : undefined}
+                    key={`${focused.id}-${feature}`}
+                    className="rounded-full border px-2.5 py-1 font-mono text-[10px] leading-tight text-zinc-300"
+                    style={{
+                      borderColor: focusedHue
+                        .replace("rgb", "rgba")
+                        .replace(")", ", 0.2)"),
+                      backgroundColor: focused.ambientGlow,
+                    }}
                   >
-                    <div
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === activeIndex
-                          ? "w-6 bg-teal-400 shadow-[0_0_8px_rgba(45,212,191,0.8)]"
-                          : "w-1.5 bg-zinc-700 hover:bg-zinc-500"
-                      }`}
+                    {feature}
+                  </span>
+                ))}
+              </div> */}
+            </div>
+
+            {onContactClick && (
+              <div className="mt-8 flex justify-center">
+                <div className="relative inline-flex items-center justify-center">
+                  <button
+                    onClick={onContactClick}
+                    data-cursor-text="TALK"
+                    className="neon-blue-btn relative rounded-full px-8 py-2.5 text-xs sm:text-sm font-medium tracking-wide text-white cursor-pointer select-none"
+                  >
+                    <span className="relative z-10 font-normal">Contact</span>
+                    <span
+                      className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-[#c9ab86] shadow-[0_0_8px_rgba(201,171,134,0.8)] border border-[#dfc3a2] pointer-events-none"
+                      aria-hidden="true"
                     />
                   </button>
-                ))}
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Section Bottom Sub-navigation Cue */}
-        <div className="relative z-10 max-w-7xl mx-auto w-full flex items-center justify-between text-[11px] text-zinc-500 pt-2 border-t border-white/[0.05]">
-          <span className="hidden sm:inline-block">
-            Scroll down to explore capabilities
-          </span>
-          <div className="flex items-center gap-3 ml-auto">
-            <span className="text-zinc-400 font-mono">
-              {currentService.title}
-            </span>
+            )}
           </div>
         </div>
       </div>

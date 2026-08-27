@@ -92,9 +92,9 @@ export function About() {
       <div className="relative max-w-6xl mx-auto">
         {/* Section header */}
         <div className="space-y-2 mb-12">
-          <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+          {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
             01 &bull; About
-          </span>
+          </span> */}
           <h2
             className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
             style={{
@@ -114,9 +114,9 @@ export function About() {
           viewport={{ once: true, amount: 0.3 }}
           className="will-change-transform"
         >
-          <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+          {/* <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
             About Me
-          </span>
+          </span> */}
           <p className="mt-4 max-w-3xl text-base sm:text-lg leading-relaxed text-zinc-300">
             I'm <strong className="text-white font-semibold">Shriya</strong>, a
             full-stack engineer building systems that hold up in production —
