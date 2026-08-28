@@ -245,8 +245,8 @@ export function Skills() {
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.06] pb-6">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-teal-400 uppercase">
-                <Sparkles className="h-3.5 w-3.5" />
-                <span>04 &bull; Technical Repertoire</span>
+                {/* <Sparkles className="h-3.5 w-3.5" />
+                <span>04 &bull; Technical Repertoire</span> */}
               </div>
               <h2
                 className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-tight"
@@ -269,7 +269,7 @@ export function Skills() {
         </div>
 
         {/* Auto-scrolling rail */}
-        <Marquee duration={70}>
+        <Marquee speed={38} showControls step={347} controlsLabel="skill categories">
           {SKILL_CATEGORIES.map((category) => {
             const Icon = category.icon;
             const isFocused = category.id === focused.id;

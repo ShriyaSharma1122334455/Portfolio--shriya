@@ -8,6 +8,12 @@ export function Education() {
       institution: "New Jersey Institute of Technology, Newark, NJ",
       period: "Sept 2022 — May 2026",
       details: "GPA: 3.6/4.0",
+      Courses: [
+        "Advanced Algorithms",
+        "Machine Learning",
+        "Cloud Computing",
+        "Data Structures",
+      ],
     },
     {
       type: "Degree",
@@ -33,9 +39,9 @@ export function Education() {
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="space-y-2 mb-12">
-          <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+          {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
             05 &bull; Education & Certifications
-          </span>
+          </span> */}
           <h2
             className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
             style={{

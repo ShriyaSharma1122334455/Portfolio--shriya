@@ -208,7 +208,7 @@ export function Services({ onContactClick }: ServicesProps) {
         </div>
 
         {/* Auto-scrolling rail */}
-        <Marquee duration={55}>
+        <Marquee speed={42}>
           {SERVICES.map((service) => {
             const Icon = SERVICE_ICONS[service.id] ?? Layers;
             const hue = solidHue(service.ambientGlow);

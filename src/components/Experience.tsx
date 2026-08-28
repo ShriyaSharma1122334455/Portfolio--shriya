@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Calendar,
   MapPin,
@@ -10,7 +10,6 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { usePinnedTrack } from "../hooks/usePinnedTrack";
 
 interface Achievement {
   text: string;
@@ -43,23 +42,81 @@ interface TimelineEntry {
   /** Clubs, societies and volunteering — education nodes only. */
   activities?: string[];
   accentColor: string;
+  /** Courses for education nodes only. */
+  courses?: string[];
 }
 
-/** Strict chronological order, oldest first: the track reads left-to-right as
- *  time moving forward, so the spine's progress fill tracks the passing years. */
+/** Reverse chronological, newest first: the rail reads 2025 back to 2018. */
 const TIMELINE: TimelineEntry[] = [
   {
-    id: "education-be",
+    id: "grad-assistant-resident-life",
+    kind: "role",
+    title: "Graduate Assistant, Resident Life",
+    org: "New Jersey Institute of Technology",
+    period: "May 2025 — Present",
+    marker: "2025",
+    location: "Newark, NJ",
+    type: "Part-Time",
+    description:
+      "Coordinating IT support, data reporting, and workflow automation for a 2,000+ resident community.",
+    achievements: [
+      {
+        text: "Served as first point of contact for 14 Resident Coordinators — onboarding, task tracking, and offboarding.",
+        tags: ["leadership", "ops"],
+      },
+      {
+        text: "Resolved 40–60 IT/administrative inquiries per month, independently troubleshooting hardware, software, and network issues.",
+        tags: ["ops"],
+      },
+      {
+        text: "Built Tableau dashboards from 10,000+ MySQL records, cutting weekly reporting time by 2–3 hours.",
+        tags: ["data"],
+      },
+      {
+        text: "Automated the reimbursement workflow with Power Automate, cutting processing time and error by 40%.",
+        tags: ["dev", "ops"],
+      },
+      {
+        text: "Trained and onboarded a newly hired Graduate Assistant on systems and support procedures.",
+        tags: ["leadership"],
+      },
+    ],
+    skills: [
+      "MySQL",
+      "Tableau",
+      "Python",
+      "Power Automate",
+      "Active Directory",
+    ],
+    accentColor: "#2dd4bf",
+  },
+  {
+    id: "education-msc",
     kind: "education",
-    title: "Bachelor's of Engineering, Information Technology",
-    org: "University of Mumbai",
-    period: "Completed Jun 2022",
-    marker: "2018",
-    location: "Mumbai, India",
-    description: "GPA: 3.5/4.0",
+    title: "M.S. Computer Science",
+    org: "New Jersey Institute of Technology, Newark, NJ",
+    period: "2024 — 2026",
+    marker: "2024",
+    location: "Newark, NJ",
+    description: "GPA: 3.6/4.0",
+    // Certifications now live in the About section's credential badges.
     credentials: [],
-    activities: ["Sponsorship Manager", "Member, Badminton Club"],
-    accentColor: "#f59e0b",
+    activities: [
+      "President — GWICS (Graduate Women in Computer Science)",
+      "Volunteer, NJIT Food Pantry",
+    ],
+    courses: [
+      "AdvancedData Structures & Algorithms",
+      "Machine Learning",
+      "Artificial Intelligence",
+      "Cloud Computing",
+      "DataBase Systems Design",
+      "Web Application Development",
+      "Software Design and Product Methodologies",
+      "Internet and Highlayer Protocols",
+      "Java Programming",
+    ],
+    accentColor: "#fbbf24",
   },
   {
     id: "software-developer-tcs",
@@ -106,74 +163,40 @@ const TIMELINE: TimelineEntry[] = [
     accentColor: "#818cf8",
   },
   {
-    id: "education-msc",
+    id: "education-be",
     kind: "education",
-    title: "M.S. Computer Science",
-    org: "New Jersey Institute of Technology, Newark, NJ",
-    period: "2024 — 2026",
-    marker: "2024",
-    location: "Newark, NJ",
-    description: "GPA: 3.6/4.0",
-    // Certifications now live in the About section's credential badges.
+    title: "Bachelor's of Engineering, Information Technology",
+    org: "University of Mumbai",
+    period: "2018 — 2022",
+    marker: "2018",
+    location: "Mumbai, India",
+    description: "GPA: 3.5/4.0",
     credentials: [],
-    activities: [
-      "President — GWICS (Graduate Women in Computer Science)",
-      "Volunteer, NJIT Food Pantry",
+    activities: ["Sponsorship Manager", "Member, Badminton Club"],
+    accentColor: "#f59e0b",
+    courses: [
+      "Data Structures & Algorithms",
+      "Database Management Systems",
+      "Internet of Things",
+      "Software Engineering",
+      "Computer Networks",
+      "Operating Systems",
+      "Web Development",
+      "Cloud Computing",
+      "",
     ],
-    accentColor: "#fbbf24",
-  },
-  {
-    id: "grad-assistant-resident-life",
-    kind: "role",
-    title: "Graduate Assistant, Resident Life",
-    org: "New Jersey Institute of Technology",
-    period: "May 2025 — Present",
-    marker: "2025",
-    location: "Newark, NJ",
-    type: "Part-Time",
-    description:
-      "Coordinating IT support, data reporting, and workflow automation for a 2,000+ resident community.",
-    achievements: [
-      {
-        text: "Served as first point of contact for 14 Resident Coordinators — onboarding, task tracking, and offboarding.",
-        tags: ["leadership", "ops"],
-      },
-      {
-        text: "Resolved 40–60 IT/administrative inquiries per month, independently troubleshooting hardware, software, and network issues.",
-        tags: ["ops"],
-      },
-      {
-        text: "Built Tableau dashboards from 10,000+ MySQL records, cutting weekly reporting time by 2–3 hours.",
-        tags: ["data"],
-      },
-      {
-        text: "Automated the reimbursement workflow with Power Automate, cutting processing time and error by 40%.",
-        tags: ["dev", "ops"],
-      },
-      {
-        text: "Trained and onboarded a newly hired Graduate Assistant on systems and support procedures.",
-        tags: ["leadership"],
-      },
-    ],
-    skills: [
-      "MySQL",
-      "Tableau",
-      "Python",
-      "Power Automate",
-      "Active Directory",
-    ],
-    accentColor: "#2dd4bf",
   },
 ];
 
 export function Experience() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLElement | null)[]>([]);
+  const animationRef = useRef(0);
 
   const [reducedMotion, setReducedMotion] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [cardWidth, setCardWidth] = useState(440);
+  const [progress, setProgress] = useState(0);
+  const [cardWidth, setCardWidth] = useState(460);
 
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -183,49 +206,77 @@ export function Experience() {
     return () => query.removeEventListener("change", onChange);
   }, []);
 
-  // Card width lives in JS because the track's end padding is derived from it.
+  // Card width lives in JS because the rail's end padding is derived from it.
   useEffect(() => {
     const pick = () => {
       const w = window.innerWidth;
-      setCardWidth(w < 640 ? Math.round(w * 0.78) : w < 1024 ? 420 : 440);
+      setCardWidth(w < 640 ? Math.round(w * 0.84) : w < 1024 ? 430 : 460);
     };
     pick();
     window.addEventListener("resize", pick);
     return () => window.removeEventListener("resize", pick);
   }, []);
 
-  const { distance, progress, offset, sectionHeight } = usePinnedTrack(
-    sectionRef,
-    trackRef,
-    !reducedMotion,
-    0.85,
-  );
-
-  /**
-   * Half a viewport minus half a card. Without this the first and last cards
-   * can never reach the middle of the stage — the last one used to stop ~150px
-   * short and stay dimmed, so the final entry never came into focus.
-   */
-  const endPadding = `calc(50vw - ${cardWidth / 2}px)`;
-
-  // Whichever card sits nearest the middle of the viewport is the focused one.
+  // The rail is a plain horizontal scroll container, so vertical page scroll is
+  // never intercepted — the reader can pass the section without exhausting it.
   useEffect(() => {
-    const centre = window.innerWidth / 2;
-    let nearest = 0;
-    let best = Infinity;
+    const el = scrollerRef.current;
+    if (!el) return;
 
-    cardRefs.current.forEach((card, index) => {
-      if (!card) return;
-      const rect = card.getBoundingClientRect();
-      const delta = Math.abs(rect.left + rect.width / 2 - centre);
-      if (delta < best) {
-        best = delta;
-        nearest = index;
+    let frame = 0;
+
+    const measure = () => {
+      frame = 0;
+      const travel = el.scrollWidth - el.clientWidth;
+      setProgress(travel > 0 ? el.scrollLeft / travel : 0);
+
+      const centre = el.scrollLeft + el.clientWidth / 2;
+      let nearest = 0;
+      let best = Infinity;
+
+      cardRefs.current.forEach((card, index) => {
+        if (!card) return;
+        const middle = card.offsetLeft + card.offsetWidth / 2;
+        const delta = Math.abs(middle - centre);
+        if (delta < best) {
+          best = delta;
+          nearest = index;
+        }
+      });
+
+      setActiveIndex(nearest);
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(measure);
+    };
+
+    // A real gesture cancels any glide in flight, so the reader always wins.
+    const cancelGlide = () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = 0;
       }
-    });
+    };
 
-    setActiveIndex(nearest);
-  }, [offset]);
+    measure();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    el.addEventListener("wheel", cancelGlide, { passive: true });
+    el.addEventListener("touchstart", cancelGlide, { passive: true });
+    el.addEventListener("pointerdown", cancelGlide, { passive: true });
+    window.addEventListener("resize", onScroll);
+
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      cancelGlide();
+      el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("wheel", cancelGlide);
+      el.removeEventListener("touchstart", cancelGlide);
+      el.removeEventListener("pointerdown", cancelGlide);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
 
   const activeEntry = TIMELINE[activeIndex];
 
@@ -235,22 +286,58 @@ export function Experience() {
     (entry) => entry.kind === "education",
   );
 
-  /** Scroll the page so `index` comes to rest in the middle of the stage. */
-  const goToIndex = (index: number) => {
-    const section = sectionRef.current;
-    const card = cardRefs.current[index];
-    if (!section || !card || distance <= 0) return;
+  /** Half the rail minus half a card, so the ends can still reach the middle. */
+  const endPadding = `calc(50vw - ${cardWidth / 2}px)`;
 
-    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-    const cardCentre =
-      card.offsetLeft + card.offsetWidth / 2 - window.innerWidth / 2;
-    const target = Math.min(1, Math.max(0, cardCentre / distance));
+  /**
+   * Drive the glide ourselves rather than using behavior:"smooth".
+   *
+   * Tracking scroll position re-renders this component on every frame, and that
+   * reliably aborts the browser's own smooth scroll part-way — a jump to the
+   * last card would stall in the middle, and backward jumps did not move at
+   * all. Setting scrollLeft per frame is immune to that.
+   */
+  const animateTo = useCallback(
+    (target: number) => {
+      const el = scrollerRef.current;
+      if (!el) return;
 
-    window.scrollTo({
-      top: sectionTop + target * distance,
-      behavior: reducedMotion ? "auto" : "smooth",
-    });
-  };
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+
+      if (reducedMotion) {
+        el.scrollLeft = target;
+        return;
+      }
+
+      const from = el.scrollLeft;
+      const delta = target - from;
+      if (Math.abs(delta) < 1) return;
+
+      const duration = Math.min(700, 260 + Math.abs(delta) * 0.3);
+      const started = performance.now();
+      const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+
+      const step = (now: number) => {
+        const t = Math.min(1, (now - started) / duration);
+        el.scrollLeft = from + delta * easeOutCubic(t);
+        animationRef.current = t < 1 ? requestAnimationFrame(step) : 0;
+      };
+
+      animationRef.current = requestAnimationFrame(step);
+    },
+    [reducedMotion],
+  );
+
+  const goToIndex = useCallback(
+    (index: number) => {
+      const el = scrollerRef.current;
+      const card = cardRefs.current[index];
+      if (!el || !card) return;
+
+      animateTo(card.offsetLeft - (el.clientWidth - card.offsetWidth) / 2);
+    },
+    [animateTo],
+  );
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowRight") {
@@ -264,24 +351,20 @@ export function Experience() {
 
   return (
     <section
-      ref={sectionRef}
       id="experience"
-      className="relative bg-[#050609]"
-      style={{ height: sectionHeight }}
+      className="relative py-24 sm:py-28 bg-[#050609] overflow-hidden"
     >
-      {/* Pinned stage. It holds while the track slides beneath it and releases
-          on its own once the track runs out, so the page continues normally. */}
-      <div className="sticky top-0 h-screen overflow-hidden flex flex-col">
-        {/* Ambient wash picking up the focused entry */}
-        <div
-          aria-hidden="true"
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[760px] h-[520px] rounded-full blur-[170px] opacity-[0.13] pointer-events-none transition-colors duration-700"
-          style={{ backgroundColor: activeEntry.accentColor }}
-        />
+      {/* Ambient wash picking up the focused entry */}
+      <div
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[760px] h-[520px] rounded-full blur-[170px] opacity-[0.13] pointer-events-none transition-colors duration-700"
+        style={{ backgroundColor: activeEntry.accentColor }}
+      />
 
+      <div className="relative">
         {/* Header */}
-        <div className="relative z-20 px-6 sm:px-10 md:px-16 lg:px-24 pt-10 sm:pt-14 shrink-0">
-          <div className="max-w-7xl mx-auto flex items-end justify-between gap-6">
+        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mb-10">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div className="space-y-2">
               {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
                 02 &bull; Experience
@@ -299,35 +382,26 @@ export function Experience() {
 
             <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-400 shrink-0">
               <span className="h-2 w-2 rounded-full bg-teal-400" />
-              <span>Scroll to travel &rarr;</span>
+              <span>Swipe or drag sideways &rarr;</span>
             </div>
           </div>
         </div>
 
-        {/* Horizontal rail */}
+        {/* Horizontal rail — native scrolling, so the page scroll passes through */}
         <div
+          ref={scrollerRef}
           role="group"
           aria-roledescription="carousel"
           aria-label="Career journey timeline"
           tabIndex={0}
           onKeyDown={onKeyDown}
-          className={`relative z-10 my-auto min-h-0 outline-none focus-visible:ring-1 focus-visible:ring-teal-400/40 ${
-            reducedMotion ? "overflow-x-auto" : ""
-          }`}
+          className="no-scrollbar overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-1 focus-visible:ring-teal-400/40"
         >
           <div
-            ref={trackRef}
             className="relative flex items-stretch gap-8 sm:gap-14 w-max py-4"
-            style={{
-              paddingLeft: endPadding,
-              paddingRight: endPadding,
-              transform: reducedMotion
-                ? undefined
-                : `translate3d(${offset}px, 0, 0)`,
-              willChange: "transform",
-            }}
+            style={{ paddingLeft: endPadding, paddingRight: endPadding }}
           >
-            {/* Spine running the length of the track, behind the cards */}
+            {/* Spine running the length of the rail, behind the cards */}
             <div
               aria-hidden="true"
               className="absolute left-0 right-0 top-[84px] h-px bg-white/[0.08]"
@@ -350,14 +424,14 @@ export function Experience() {
                     cardRefs.current[index] = node;
                   }}
                   aria-current={isActive ? "true" : undefined}
-                  className="relative shrink-0 flex flex-col"
+                  className="relative shrink-0 flex flex-col scroll-mt-24"
                   style={{
                     width: `${cardWidth}px`,
                     opacity: isActive ? 1 : 0.55,
-                    transform: `scale(${isActive ? 1 : 0.96})`,
+                    transform: `scale(${isActive ? 1 : 0.97})`,
                     transition: reducedMotion
                       ? "none"
-                      : "opacity 400ms ease-out, transform 400ms cubic-bezier(0.16, 1, 0.3, 1)",
+                      : "opacity 300ms ease-out, transform 300ms cubic-bezier(0.16, 1, 0.3, 1)",
                   }}
                 >
                   {/* Marker year above the spine */}
@@ -402,16 +476,18 @@ export function Experience() {
                     />
                   </div>
 
-                  {/* Entry card */}
+                  {/* Entry card. No max-height and no inner scrolling — the card
+                      grows to fit its content, and the row stretches to match
+                      the tallest so the rail stays level. */}
                   <div
-                    className="glass-card rounded-2xl p-5 sm:p-6 flex-1 flex flex-col overflow-hidden max-h-[52vh]"
+                    className="glass-card rounded-2xl p-5 sm:p-6 flex-1 flex flex-col"
                     style={{
                       borderColor: isActive
                         ? `${entry.accentColor}40`
                         : undefined,
                     }}
                   >
-                    <div className="pb-3 border-b border-white/[0.06] shrink-0">
+                    <div className="pb-3 border-b border-white/[0.06]">
                       {isEducation && (
                         <span
                           className="block font-mono text-[10px] uppercase tracking-widest mb-1"
@@ -429,7 +505,7 @@ export function Experience() {
                         ) : (
                           <Briefcase className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
                         )}
-                        <span className="truncate">{entry.org}</span>
+                        <span>{entry.org}</span>
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-zinc-500">
                         <span className="flex items-center gap-1">
@@ -444,12 +520,12 @@ export function Experience() {
                       </div>
                     </div>
 
-                    <p className="mt-3 text-[13px] leading-relaxed text-zinc-300 shrink-0">
+                    <p className="mt-3 text-[13px] leading-relaxed text-zinc-300">
                       {entry.description}
                     </p>
 
                     {entry.achievements && entry.achievements.length > 0 && (
-                      <ul className="mt-3 space-y-2 min-h-0 flex-1 overflow-y-auto pr-1">
+                      <ul className="mt-3 space-y-2">
                         {entry.achievements.map((achievement) => (
                           <li
                             key={achievement.text}
@@ -487,7 +563,7 @@ export function Experience() {
                     )}
 
                     {entry.activities && entry.activities.length > 0 && (
-                      <div className="mt-4 min-h-0">
+                      <div className="mt-4">
                         <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
                           Involvement
                         </span>
@@ -510,16 +586,36 @@ export function Experience() {
                       </div>
                     )}
 
+                    {entry.courses && entry.courses.length > 0 && (
+                      <div className="mt-4">
+                        <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                          Coursework
+                        </span>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {entry.courses.map((course) => (
+                            <span
+                              key={course}
+                              className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[10px] leading-tight text-zinc-300"
+                            >
+                              {course}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
                     {entry.skills && entry.skills.length > 0 && (
-                      <div className="mt-4 pt-3 border-t border-white/[0.06] flex flex-wrap gap-1.5 shrink-0">
-                        {entry.skills.map((skill) => (
-                          <span
-                            key={skill}
-                            className="rounded-full border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-zinc-300"
-                          >
-                            {skill}
-                          </span>
-                        ))}
+                      <div className="mt-auto pt-4">
+                        <div className="border-t border-white/[0.06] pt-3 flex flex-wrap gap-1.5">
+                          {entry.skills.map((skill) => (
+                            <span
+                              key={skill}
+                              className="rounded-full border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-zinc-300"
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -530,7 +626,7 @@ export function Experience() {
         </div>
 
         {/* Progress readout + direct navigation */}
-        <div className="relative z-20 px-6 sm:px-10 md:px-16 lg:px-24 pb-10 sm:pb-14 shrink-0">
+        <div className="px-6 sm:px-10 md:px-16 lg:px-24 mt-8">
           <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
             <span
               className="font-mono text-xs tabular-nums"

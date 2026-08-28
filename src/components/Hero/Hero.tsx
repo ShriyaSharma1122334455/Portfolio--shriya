@@ -9,7 +9,6 @@ import {
 } from "motion/react";
 import { HeroBackground } from "./HeroBackground";
 import { ArrowDown, Sparkles } from "lucide-react";
-import portraitImg from "../../assets/images/shriya_portrait_1787528786641.jpg";
 
 interface HeroProps {
   onContactClick: () => void;
@@ -111,37 +110,56 @@ export function Hero({ onContactClick }: HeroProps) {
         }}
         className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center my-auto will-change-transform"
       >
-        {/* Profile Silhouette / Portrait Element with atmospheric blending */}
+        {/* Ambient focal mark — concentric orbits drawn in code rather than an
+            image, so it inherits the palette and costs nothing to download. */}
         <motion.div
           style={{ x: portraitParallaxX, y: portraitParallaxY }}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-64 sm:w-72 md:w-84 h-72 sm:h-80 md:h-96 mx-auto mb-[-80px] sm:mb-[-100px] md:mb-[-120px] pointer-events-none"
+          className="relative w-64 sm:w-72 md:w-84 h-64 sm:h-72 md:h-80 mx-auto mb-[-40px] sm:mb-[-52px] md:mb-[-64px] pointer-events-none"
+          aria-hidden="true"
         >
-          {/* Subtle teal rim light behind head */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-52 h-52 bg-teal-500/25 rounded-full blur-3xl pointer-events-none" />
+          {/* Core glow sitting behind the rings */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-52 bg-teal-500/25 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-indigo-400/20 rounded-full blur-2xl" />
 
-          {/* Masked Portrait Image with gentle fade at edges and bottom */}
-          <div
-            className="w-full h-full relative"
-            style={{
-              maskImage:
-                "radial-gradient(ellipse 85% 75% at 50% 40%, black 45%, transparent 95%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse 85% 75% at 50% 40%, black 45%, transparent 95%)",
-            }}
+          {/* Rings. Each turns at its own pace and tilt, which reads as depth
+              without any 3D — the outer two counter-rotate against the inner. */}
+          <motion.div
+            className="absolute inset-0 rounded-full border border-teal-400/20"
+            style={{ maskImage: "linear-gradient(200deg, black 20%, transparent 78%)", WebkitMaskImage: "linear-gradient(200deg, black 20%, transparent 78%)" }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 46, ease: "linear", repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute inset-[14%] rounded-full border border-white/[0.09]"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 34, ease: "linear", repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute inset-[27%] rounded-full border border-indigo-300/20"
+            style={{ maskImage: "linear-gradient(20deg, black 25%, transparent 85%)", WebkitMaskImage: "linear-gradient(20deg, black 25%, transparent 85%)" }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 22, ease: "linear", repeat: Infinity }}
+          />
+
+          {/* A lit node riding the outer orbit, so the motion is legible */}
+          <motion.div
+            className="absolute inset-0"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 46, ease: "linear", repeat: Infinity }}
           >
-            <img
-              src={portraitImg}
-              alt="Shriya Sharma"
-              className="w-full h-full object-cover object-top filter brightness-[0.92] contrast-[1.08]"
-              loading="eager"
-            />
-          </div>
+            <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-teal-300 shadow-[0_0_14px_rgba(45,212,191,0.9)]" />
+          </motion.div>
+          <motion.div
+            className="absolute inset-[27%]"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 22, ease: "linear", repeat: Infinity }}
+          >
+            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 h-1.5 w-1.5 rounded-full bg-indigo-200/90 shadow-[0_0_10px_rgba(165,180,252,0.8)]" />
+          </motion.div>
 
-          {/* Soft atmospheric mist overlay on bottom of portrait */}
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#030407] via-[#030407]/70 to-transparent pointer-events-none" />
         </motion.div>
 
         {/* Cinematic Headline (Matching Yaroslav: "I'm Shriya" + "WEB DEVELOPER") */}
@@ -167,7 +185,7 @@ export function Hero({ onContactClick }: HeroProps) {
           </h1>
 
           {/* Line 2: Role with Smooth Vertical Crossfade */}
-          <div className="h-10 sm:h-12 md:h-14 overflow-hidden flex items-center justify-center">
+          <div className="h-12 sm:h-14 md:h-16 lg:h-20 overflow-hidden flex items-center justify-center">
             <AnimatePresence mode="wait">
               <motion.h2
                 key={ROLES[roleIndex]}
@@ -175,10 +193,16 @@ export function Hero({ onContactClick }: HeroProps) {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -24, opacity: 0 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal uppercase tracking-[0.06em] text-zinc-200"
+                className="font-serif font-normal uppercase tracking-[0.06em] text-zinc-200 whitespace-nowrap"
                 style={{
                   fontFamily:
                     "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
+                  // The rotator lives in a fixed-height box with overflow
+                  // hidden so the vertical crossfade reads cleanly. That means
+                  // a wrapped line gets clipped — "TECHNICAL SUPPORT ENGINEER"
+                  // lost its second line on phones. Scaling with the viewport
+                  // and refusing to wrap keeps every role on one line instead.
+                  fontSize: "clamp(1.05rem, 4.6vw, 3.75rem)",
                 }}
               >
                 {ROLES[roleIndex]}

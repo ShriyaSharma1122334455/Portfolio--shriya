@@ -97,40 +97,12 @@
 }
 
 
-/* ── Marquee ──────────────────────────────────────────────────────────────
-   The track holds two identical copies of its items, so translating it by
-   exactly -50% lands the second copy where the first began and the loop is
-   seamless. Duration is supplied per instance via --marquee-duration. */
-@keyframes marquee-scroll {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(-50%, 0, 0);
-  }
+/* Horizontal card rails scroll natively; the native bar is visual noise. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-.marquee-track {
-  animation: marquee-scroll var(--marquee-duration, 60s) linear infinite;
-  will-change: transform;
-}
-
-.marquee-track.is-reverse {
-  animation-direction: reverse;
-}
-
-/* Hovering or tabbing into the rail holds it still so a card can be read. */
-.marquee:hover .marquee-track,
-.marquee:focus-within .marquee-track {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marquee-track {
-    animation: none;
-  }
-  /* Nothing moves on its own, so hand scrolling back to the reader. */
-  .marquee {
-    overflow-x: auto;
-  }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
