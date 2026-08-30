@@ -108,7 +108,7 @@ export function Hero({ onContactClick }: HeroProps) {
           opacity: heroOpacity,
           transformOrigin: "center 40%",
         }}
-        className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center my-auto will-change-transform"
+        className="relative z-10 w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center my-auto will-change-transform"
       >
         {/* Ambient focal mark — concentric orbits drawn in code rather than an
             image, so it inherits the palette and costs nothing to download. */}
@@ -117,17 +117,17 @@ export function Hero({ onContactClick }: HeroProps) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-64 sm:w-72 md:w-84 h-64 sm:h-72 md:h-80 mx-auto mb-[-40px] sm:mb-[-52px] md:mb-[-64px] pointer-events-none"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -z-10 w-[min(88vw,34rem)] h-[min(88vw,34rem)] opacity-70 pointer-events-none"
           aria-hidden="true"
         >
           {/* Core glow sitting behind the rings */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-52 bg-teal-500/25 rounded-full blur-3xl" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-indigo-400/20 rounded-full blur-2xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-52 h-52 bg-accent/25 rounded-full blur-3xl" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-accent/20 rounded-full blur-2xl" />
 
           {/* Rings. Each turns at its own pace and tilt, which reads as depth
               without any 3D — the outer two counter-rotate against the inner. */}
           <motion.div
-            className="absolute inset-0 rounded-full border border-teal-400/20"
+            className="absolute inset-0 rounded-full border border-accent/20"
             style={{
               maskImage: "linear-gradient(200deg, black 20%, transparent 78%)",
               WebkitMaskImage:
@@ -142,7 +142,7 @@ export function Hero({ onContactClick }: HeroProps) {
             transition={{ duration: 34, ease: "linear", repeat: Infinity }}
           />
           <motion.div
-            className="absolute inset-[27%] rounded-full border border-indigo-300/20"
+            className="absolute inset-[27%] rounded-full border border-accent/20"
             style={{
               maskImage: "linear-gradient(20deg, black 25%, transparent 85%)",
               WebkitMaskImage:
@@ -158,14 +158,14 @@ export function Hero({ onContactClick }: HeroProps) {
             animate={{ rotate: 360 }}
             transition={{ duration: 46, ease: "linear", repeat: Infinity }}
           >
-            <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-teal-300 shadow-[0_0_14px_rgba(45,212,191,0.9)]" />
+            <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-accent shadow-[0_0_14px_rgba(96,130,182,0.95)]" />
           </motion.div>
           <motion.div
             className="absolute inset-[27%]"
             animate={{ rotate: -360 }}
             transition={{ duration: 22, ease: "linear", repeat: Infinity }}
           >
-            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 h-1.5 w-1.5 rounded-full bg-indigo-200/90 shadow-[0_0_10px_rgba(165,180,252,0.8)]" />
+            <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 h-1.5 w-1.5 rounded-full bg-accent/90 shadow-[0_0_10px_rgba(96,130,182,0.85)]" />
           </motion.div>
         </motion.div>
 
@@ -175,18 +175,22 @@ export function Hero({ onContactClick }: HeroProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-20 space-y-1 sm:space-y-2 mt-4"
+          className="relative z-20 space-y-1 sm:space-y-3"
         >
           {/* Line 1: I'm Shriya (Serif + Elegant Italic) */}
           <h1
-            className="font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal text-white tracking-tight"
+            className="font-serif font-normal text-white tracking-tight leading-[0.95]"
             style={{
               fontFamily:
                 "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
+              // The name is the hero now that there is no portrait, so it is
+              // sized off the viewport rather than a step scale — it stays the
+              // largest thing on the page at every width.
+              fontSize: "clamp(2.75rem, 11vw, 8.5rem)",
             }}
           >
             {" "}
-            <span className="italic font-normal tracking-wide text-zinc-100">
+            <span className="italic font-elegant tracking-wide text-zinc-100">
               Shriya Sharma
             </span>
           </h1>
@@ -236,7 +240,7 @@ export function Hero({ onContactClick }: HeroProps) {
 
               {/* Glowing accent indicator dot at the bottom center (matching screenshot) */}
               <span
-                className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-[#c9ab86] shadow-[0_0_8px_rgba(201,171,134,0.8)] border border-[#dfc3a2] pointer-events-none"
+                className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-accent shadow-[0_0_8px_rgba(96,130,182,0.9)] border border-accent/70 pointer-events-none"
                 aria-hidden="true"
               />
             </button>
@@ -244,7 +248,7 @@ export function Hero({ onContactClick }: HeroProps) {
 
           {/* Sub-badge: "✦ AWS Certified Solutions Architect • Software Engineer" */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 backdrop-blur-md text-[11px] sm:text-xs text-zinc-400 font-normal">
-            <Sparkles className="h-3 w-3 text-cyan-400" />
+            <Sparkles className="h-3 w-3 text-accent" />
             <span className="text-zinc-300">
               AWS Certified &bull; Software Engineer
             </span>

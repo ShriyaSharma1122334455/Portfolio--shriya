@@ -35,7 +35,7 @@ const SERVICES: ServiceItem[] = [
       "Full SDLC Ownership (Requirements → Deployment)",
       "React, Node.js, FastAPI",
     ],
-    ambientGlow: "rgba(99, 102, 241, 0.16)", // Indigo
+    ambientGlow: "rgba(96, 130, 182, 0.16)", // Indigo
     badge: "Software Development",
   },
   {
@@ -51,7 +51,7 @@ const SERVICES: ServiceItem[] = [
       "React + FastAPI/Node.js",
       "Human-in-the-Loop Review Flows",
     ],
-    ambientGlow: "rgba(236, 72, 153, 0.16)", // Pink / Magenta
+    ambientGlow: "rgba(96, 130, 182, 0.16)", // Pink / Magenta
     badge: "AI Full-Stack",
   },
   {
@@ -67,7 +67,7 @@ const SERVICES: ServiceItem[] = [
       "Redis Caching & Performance Tuning",
       "Production Debugging Under SLA",
     ],
-    ambientGlow: "rgba(56, 189, 248, 0.16)", // Cyan / Sky
+    ambientGlow: "rgba(96, 130, 182, 0.16)", // Cyan / Sky
     badge: "Backend",
   },
   {
@@ -83,7 +83,7 @@ const SERVICES: ServiceItem[] = [
       "Data Validation & Anomaly Detection",
       "Stakeholder Reporting",
     ],
-    ambientGlow: "rgba(245, 158, 11, 0.15)", // Amber
+    ambientGlow: "rgba(96, 130, 182, 0.15)", // Amber
     badge: "Data Analysis",
   },
   {
@@ -99,7 +99,7 @@ const SERVICES: ServiceItem[] = [
       "Migration Planning",
       "Multi-Database Architecture Decisions",
     ],
-    ambientGlow: "rgba(52, 211, 153, 0.16)", // Emerald
+    ambientGlow: "rgba(96, 130, 182, 0.16)", // Emerald
     badge: "Data Architecture",
   },
   {
@@ -115,7 +115,7 @@ const SERVICES: ServiceItem[] = [
       "Process Optimization",
       "LLM Integration",
     ],
-    ambientGlow: "rgba(168, 85, 247, 0.16)", // Violet / Purple
+    ambientGlow: "rgba(96, 130, 182, 0.16)", // Violet / Purple
     badge: "AI & Automation",
   },
   {
@@ -131,7 +131,7 @@ const SERVICES: ServiceItem[] = [
       "SOP & Runbook Authoring",
       "Tier 1/2 Application Support",
     ],
-    ambientGlow: "rgba(45, 212, 191, 0.16)", // Teal
+    ambientGlow: "rgba(96, 130, 182, 0.16)", // Teal
     badge: "Reliability & Ops",
   },
 ];
@@ -185,7 +185,7 @@ export function Services({ onContactClick }: ServicesProps) {
         <div className="px-6 sm:px-10 md:px-16 lg:px-24 mb-10">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.06] pb-6">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-teal-400 uppercase">
+              <div className="flex items-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
                 {/* <Zap className="h-3.5 w-3.5" /> */}
                 {/* <span>Services</span> */}
               </div>
@@ -200,8 +200,8 @@ export function Services({ onContactClick }: ServicesProps) {
               </h2>
             </div>
 
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-400 shrink-0">
-              <span className="h-2 w-2 rounded-full bg-teal-400" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs text-zinc-400 shrink-0">
+              <span className="h-2 w-2 rounded-full bg-accent" />
               <span>{SERVICES.length} Disciplines &bull; Hover to pause</span>
             </div>
           </div>
@@ -256,7 +256,7 @@ export function Services({ onContactClick }: ServicesProps) {
                     <h3 className="font-sans text-base sm:text-lg font-semibold text-white leading-snug">
                       {service.title}
                     </h3>
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                    <p className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
                       {service.badge}
                     </p>
                   </div>
@@ -270,7 +270,7 @@ export function Services({ onContactClick }: ServicesProps) {
                       {service.features.map((feature) => (
                         <span
                           key={feature}
-                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[9.5px] leading-tight text-zinc-300"
+                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] text-[11px] leading-tight text-zinc-300"
                         >
                           {feature}
                         </span>
@@ -311,7 +311,7 @@ export function Services({ onContactClick }: ServicesProps) {
                 {focused.features.map((feature) => (
                   <span
                     key={`${focused.id}-${feature}`}
-                    className="rounded-full border px-2.5 py-1 font-mono text-[10px] leading-tight text-zinc-300"
+                    className="rounded-full border px-2.5 py-1 text-[11.5px] leading-tight text-zinc-300"
                     style={{
                       borderColor: focusedHue
                         .replace("rgb", "rgba")
@@ -335,7 +335,7 @@ export function Services({ onContactClick }: ServicesProps) {
                   >
                     <span className="relative z-10 font-normal">Contact</span>
                     <span
-                      className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-[#c9ab86] shadow-[0_0_8px_rgba(201,171,134,0.8)] border border-[#dfc3a2] pointer-events-none"
+                      className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full bg-accent shadow-[0_0_8px_rgba(96,130,182,0.9)] border border-accent/70 pointer-events-none"
                       aria-hidden="true"
                     />
                   </button>

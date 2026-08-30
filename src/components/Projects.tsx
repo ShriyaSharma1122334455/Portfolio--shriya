@@ -104,7 +104,7 @@ export function Projects() {
         {/* Header row */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
           <div className="space-y-2">
-            {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+            {/* <span className="text-xs font-medium tracking-widest text-accent uppercase">
               03 &bull; Projects
             </span> */}
             <h2
@@ -179,7 +179,7 @@ export function Projects() {
                   >
                     {/* Top row: category + outbound links */}
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs font-medium text-teal-400">
+                      <span className="text-xs font-medium text-accent">
                         {project.categoryLabel}
                       </span>
 
@@ -222,7 +222,7 @@ export function Projects() {
                     </p>
 
                     {/* Impact badge */}
-                    <div className="mt-4 flex w-fit items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-300">
+                    <div className="mt-4 flex w-fit items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs font-medium text-accent">
                       <TrendingUp className="h-3 w-3" />
                       <span>{project.impact}</span>
                     </div>

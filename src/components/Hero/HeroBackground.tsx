@@ -35,17 +35,17 @@ export function HeroBackground({ scrollYProgress, mouseXOffset, mouseYOffset }: 
       {/* Atmospheric teal/cyan volumetric glowing orbs (Behind subject) */}
       <motion.div
         style={{ x: glowX, y: glowY }}
-        className="absolute top-[18%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] sm:h-[650px] sm:w-[650px] rounded-full bg-gradient-to-b from-cyan-900/30 via-teal-950/20 to-transparent blur-[130px] will-change-transform"
+        className="absolute top-[18%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] sm:h-[650px] sm:w-[650px] rounded-full bg-gradient-to-b from-accent/30 via-accent/20 to-transparent blur-[130px] will-change-transform"
       />
 
       <motion.div
         style={{ x: mistX, y: mistY }}
-        className="absolute top-[30%] right-1/4 h-[380px] w-[380px] rounded-full bg-sky-900/20 blur-[110px] will-change-transform"
+        className="absolute top-[30%] right-1/4 h-[380px] w-[380px] rounded-full bg-accent/20 blur-[110px] will-change-transform"
       />
 
       <motion.div
         style={{ x: useTransform(mouseXOffset, [-1, 1], [-15, 15]), y: useTransform(mouseYOffset, [-1, 1], [15, -15]) }}
-        className="absolute top-[40%] left-1/4 h-[320px] w-[320px] rounded-full bg-indigo-950/25 blur-[100px] will-change-transform"
+        className="absolute top-[40%] left-1/4 h-[320px] w-[320px] rounded-full bg-accent/25 blur-[100px] will-change-transform"
       />
 
       {/* Soft Fog & Mist Layer at Lower Half */}

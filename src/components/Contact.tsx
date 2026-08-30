@@ -71,7 +71,7 @@ export function Contact() {
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="space-y-2 mb-12">
-          {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+          {/* <span className="text-xs font-medium tracking-widest text-accent uppercase">
             06 &bull; Contact
           </span> */}
           <h2
@@ -99,7 +99,7 @@ export function Contact() {
               <div className="flex items-center justify-between gap-2">
                 <a
                   href={`mailto:${emailAddress}`}
-                  className="text-sm font-medium text-white hover:text-indigo-300 transition-colors"
+                  className="text-sm font-medium text-white hover:text-accent transition-colors"
                 >
                   {emailAddress}
                 </a>
@@ -110,14 +110,14 @@ export function Contact() {
                   aria-label="Copy email"
                 >
                   {copied ? (
-                    <Check className="h-4 w-4 text-emerald-400" />
+                    <Check className="h-4 w-4 text-accent" />
                   ) : (
                     <Copy className="h-4 w-4" />
                   )}
                 </button>
               </div>
               {copied && (
-                <span className="text-xs text-emerald-400 font-mono block">
+                <span className="text-xs text-accent block">
                   Copied to clipboard!
                 </span>
               )}
@@ -158,7 +158,7 @@ export function Contact() {
 
             <div className="glass-card rounded-2xl p-5">
               <div className="text-xs text-zinc-300 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="h-2 w-2 rounded-full bg-accent animate-pulse" />
                 <span className="font-semibold text-white">
                   Current Availability
                 </span>
@@ -174,13 +174,13 @@ export function Contact() {
           {/* Form */}
           <div className="md:col-span-7 glass-card rounded-2xl p-6 sm:p-8">
             <h3 className="text-base font-semibold text-white mb-6 flex items-center gap-2">
-              <MessageSquare className="h-4 w-4 text-indigo-400" />
+              <MessageSquare className="h-4 w-4 text-accent" />
               Send a Message
             </h3>
 
             {status === "sent" ? (
-              <div className="p-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
-                <div className="inline-flex p-2.5 rounded-full bg-emerald-500/20 text-emerald-400">
+              <div className="p-8 rounded-xl bg-accent/10 border border-accent/20 text-center space-y-2">
+                <div className="inline-flex p-2.5 rounded-full bg-accent/20 text-accent">
                   <Check className="h-5 w-5" />
                 </div>
                 <h4 className="text-sm font-semibold text-white">
@@ -222,7 +222,7 @@ export function Contact() {
                         setFormData({ ...formData, name: e.target.value })
                       }
                       placeholder="Alex Morgan"
-                      className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none transition-colors"
+                      className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none transition-colors"
                     />
                   </div>
 
@@ -238,7 +238,7 @@ export function Contact() {
                         setFormData({ ...formData, email: e.target.value })
                       }
                       placeholder="alex@company.com"
-                      className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none transition-colors"
+                      className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -255,7 +255,7 @@ export function Contact() {
                       setFormData({ ...formData, subject: e.target.value })
                     }
                     placeholder="Role Opportunity / Project inquiry"
-                    className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none transition-colors"
+                    className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -271,7 +271,7 @@ export function Contact() {
                       setFormData({ ...formData, message: e.target.value })
                     }
                     placeholder="Tell me about your project, timeline, or team..."
-                    className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none transition-colors resize-none"
+                    className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3.5 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none transition-colors resize-none"
                   />
                 </div>
 

@@ -25,7 +25,7 @@ export function HeroCTA({ scrollYProgress, onContactClick }: HeroCTAProps) {
           <button
             onClick={onContactClick}
             data-cursor-text="TALK"
-            className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-zinc-950 shadow-sm transition-all duration-200 hover:bg-zinc-200 hover:shadow-indigo-500/10 cursor-pointer"
+            className="group inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-xs font-semibold text-zinc-950 shadow-sm transition-all duration-200 hover:bg-zinc-200 hover:shadow-accent/10 cursor-pointer"
           >
             <Mail className="h-3.5 w-3.5 text-zinc-700 group-hover:text-black transition-colors" />
             <span>Get in touch</span>

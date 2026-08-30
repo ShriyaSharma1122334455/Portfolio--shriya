@@ -33,7 +33,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "01",
     name: "Languages",
     icon: Terminal,
-    accentColor: "#38bdf8", // Sky
+    accentColor: "#6082b6", // Sky
     tagline: "Core languages & structured syntax",
     skills: ["Python", "JavaScript", "TypeScript", "SQL", "HTML/CSS"],
   },
@@ -42,7 +42,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "02",
     name: "Frontend",
     icon: Layout,
-    accentColor: "#818cf8", // Indigo
+    accentColor: "#6082b6", // Indigo
     tagline: "Component systems, reactive state & fluid UX",
     skills: [
       "React (incl. React 19)",
@@ -60,7 +60,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "03",
     name: "Backend",
     icon: Server,
-    accentColor: "#2dd4bf", // Teal
+    accentColor: "#6082b6", // Teal
     tagline: "Resilient APIs, services & caching tiers",
     skills: [
       "Node.js",
@@ -76,7 +76,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "04",
     name: "Databases",
     icon: Database,
-    accentColor: "#fbbf24", // Amber
+    accentColor: "#6082b6", // Amber
     tagline: "Relational schemas, NoSQL & data integrity",
     skills: [
       "PostgreSQL / Supabase",
@@ -91,7 +91,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "05",
     name: "AI / LLM",
     icon: Bot,
-    accentColor: "#f472b6", // Pink
+    accentColor: "#6082b6", // Pink
     tagline: "Multi-agent orchestration, RAG & LLM integration",
     skills: [
       "Multi-Agent Systems (LangGraph)",
@@ -107,7 +107,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "06",
     name: "Cloud & DevOps",
     icon: Cloud,
-    accentColor: "#22d3ee", // Cyan
+    accentColor: "#6082b6", // Cyan
     tagline: "Cloud infrastructure, CI/CD & containers",
     skills: [
       "AWS (EC2, S3, Lambda, IAM, DynamoDB) — Certified Cloud Practitioner",
@@ -123,7 +123,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "07",
     name: "Networking",
     icon: Network,
-    accentColor: "#4ade80", // Green
+    accentColor: "#6082b6", // Green
     tagline: "Troubleshooting & production environment support",
     skills: [
       "Network & System Troubleshooting",
@@ -137,7 +137,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "08",
     name: "ITSM & Application Management",
     icon: ShieldCheck,
-    accentColor: "#c084fc", // Purple
+    accentColor: "#6082b6", // Purple
     tagline: "Service management, identity & access governance",
     skills: [
       "ServiceNow",
@@ -153,7 +153,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "09",
     name: "Technical Support",
     icon: LifeBuoy,
-    accentColor: "#a78bfa", // Violet
+    accentColor: "#6082b6", // Violet
     tagline: "Incident triage, root-cause analysis & runbooks",
     skills: [
       "Tier 1 & 2 Support",
@@ -167,7 +167,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "10",
     name: "Reporting & Analytics",
     icon: BarChart3,
-    accentColor: "#34d399", // Emerald
+    accentColor: "#6082b6", // Emerald
     tagline: "BI dashboards, KPI metrics & operational visibility",
     skills: ["Tableau", "Power BI", "Excel", "Dashboard Development", "JIRA"],
   },
@@ -176,7 +176,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "11",
     name: "Project & Team Management",
     icon: Users,
-    accentColor: "#fb923c", // Orange
+    accentColor: "#6082b6", // Orange
     tagline: "Agile delivery, SDLC & cross-functional leadership",
     skills: [
       "Agile & Scrum",
@@ -197,7 +197,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "12",
     name: "Design & UX",
     icon: Palette,
-    accentColor: "#f0abfc", // Fuchsia
+    accentColor: "#6082b6", // Fuchsia
     tagline: "Heuristics, accessibility & component systems",
     skills: [
       "UI/UX Heuristics (Nielsen, Gestalt, Norman)",
@@ -212,7 +212,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
     number: "13",
     name: "Tools & Platforms",
     icon: Wrench,
-    accentColor: "#94a3b8", // Slate
+    accentColor: "#6082b6", // Slate
     tagline: "Automation & everyday delivery tooling",
     skills: ["Power Automate", "Microsoft 365", "Google Workspace", "GitHub"],
   },
@@ -244,7 +244,7 @@ export function Skills() {
         <div className="px-6 sm:px-10 md:px-16 lg:px-24 mb-10">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-white/[0.06] pb-6">
             <div className="space-y-2">
-              <div className="flex items-center gap-2 text-xs font-mono tracking-widest text-teal-400 uppercase">
+              <div className="flex items-center gap-2 text-xs font-medium tracking-widest text-accent uppercase">
                 {/* <Sparkles className="h-3.5 w-3.5" />
                 <span>04 &bull; Technical Repertoire</span> */}
               </div>
@@ -259,8 +259,8 @@ export function Skills() {
               </h2>
             </div>
 
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-400 shrink-0">
-              <span className="h-2 w-2 rounded-full bg-teal-400" />
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs text-zinc-400 shrink-0">
+              <span className="h-2 w-2 rounded-full bg-accent" />
               <span>
                 {SKILL_CATEGORIES.length} Domains &bull; Hover to pause
               </span>
@@ -331,7 +331,7 @@ export function Skills() {
                       {category.skills.map((skill) => (
                         <span
                           key={skill}
-                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[9.5px] leading-tight text-zinc-300"
+                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] text-[11px] leading-tight text-zinc-300"
                         >
                           {skill}
                         </span>
@@ -370,7 +370,7 @@ export function Skills() {
               {focused.skills.map((skill) => (
                 <span
                   key={`${focused.id}-${skill}`}
-                  className="rounded-full border px-2.5 py-1 font-mono text-[10px] leading-tight text-zinc-300"
+                  className="rounded-full border px-2.5 py-1 text-[11.5px] leading-tight text-zinc-300"
                   style={{
                     borderColor: `${focused.accentColor}33`,
                     backgroundColor: `${focused.accentColor}12`,

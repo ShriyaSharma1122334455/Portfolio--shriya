@@ -10,6 +10,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import njitLogo from "../../assets/NJIT.png";
+import tcsLogo from "../../assets/tcs.webp";
+import mumbaiLogo from "../../assets/mu.svg";
 
 interface Achievement {
   text: string;
@@ -41,6 +44,10 @@ interface TimelineEntry {
   credentials?: Credential[];
   /** Clubs, societies and volunteering — education nodes only. */
   activities?: string[];
+  /** Org mark. Falls back to a glyph when absent. */
+  logo?: string;
+  /** Overrides the default monochrome treatment for a mark that needs it. */
+  logoFilter?: string;
   accentColor: string;
   /** Courses for education nodes only. */
   courses?: string[];
@@ -57,6 +64,7 @@ const TIMELINE: TimelineEntry[] = [
     marker: "2025",
     location: "Newark, NJ",
     type: "Part-Time",
+    logo: njitLogo,
     description:
       "Coordinating IT support, data reporting, and workflow automation for a 2,000+ resident community.",
     achievements: [
@@ -88,7 +96,7 @@ const TIMELINE: TimelineEntry[] = [
       "Power Automate",
       "Active Directory",
     ],
-    accentColor: "#2dd4bf",
+    accentColor: "#6082b6",
   },
   {
     id: "education-msc",
@@ -98,6 +106,7 @@ const TIMELINE: TimelineEntry[] = [
     period: "2024 — 2026",
     marker: "2024",
     location: "Newark, NJ",
+    logo: njitLogo,
     description: "GPA: 3.6/4.0",
     // Certifications now live in the About section's credential badges.
     credentials: [],
@@ -116,7 +125,7 @@ const TIMELINE: TimelineEntry[] = [
       "Internet and Highlayer Protocols",
       "Java Programming",
     ],
-    accentColor: "#fbbf24",
+    accentColor: "#6082b6",
   },
   {
     id: "software-developer-tcs",
@@ -127,6 +136,7 @@ const TIMELINE: TimelineEntry[] = [
     marker: "2022",
     location: "India",
     type: "Full-Time",
+    logo: tcsLogo,
     description:
       "Delivered backend services, incident resolution, and change management for a 200+ user production environment.",
     achievements: [
@@ -160,7 +170,7 @@ const TIMELINE: TimelineEntry[] = [
       "PyTest",
       "ServiceNow",
     ],
-    accentColor: "#818cf8",
+    accentColor: "#6082b6",
   },
   {
     id: "education-be",
@@ -170,10 +180,11 @@ const TIMELINE: TimelineEntry[] = [
     period: "2018 — 2022",
     marker: "2018",
     location: "Mumbai, India",
+    logo: mumbaiLogo,
     description: "GPA: 3.5/4.0",
     credentials: [],
     activities: ["Sponsorship Manager", "Member, Badminton Club"],
-    accentColor: "#f59e0b",
+    accentColor: "#6082b6",
     courses: [
       "Data Structures & Algorithms",
       "Database Management Systems",
@@ -366,7 +377,7 @@ export function Experience() {
         <div className="px-6 sm:px-10 md:px-16 lg:px-24 mb-10">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-end justify-between gap-6">
             <div className="space-y-2">
-              {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+              {/* <span className="text-xs font-medium tracking-widest text-accent uppercase">
                 02 &bull; Experience
               </span> */}
               <h2
@@ -380,8 +391,8 @@ export function Experience() {
               </h2>
             </div>
 
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs font-mono text-zinc-400 shrink-0">
-              <span className="h-2 w-2 rounded-full bg-teal-400" />
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs text-zinc-400 shrink-0">
+              <span className="h-2 w-2 rounded-full bg-accent" />
               <span>Swipe or drag sideways &rarr;</span>
             </div>
           </div>
@@ -395,7 +406,7 @@ export function Experience() {
           aria-label="Career journey timeline"
           tabIndex={0}
           onKeyDown={onKeyDown}
-          className="no-scrollbar overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-1 focus-visible:ring-teal-400/40"
+          className="no-scrollbar overflow-x-auto overscroll-x-contain outline-none focus-visible:ring-1 focus-visible:ring-accent/40"
         >
           <div
             className="relative flex items-stretch gap-8 sm:gap-14 w-max py-4"
@@ -408,7 +419,7 @@ export function Experience() {
             />
             <div
               aria-hidden="true"
-              className="absolute left-0 top-[84px] h-px bg-gradient-to-r from-teal-400/70 to-teal-400/20"
+              className="absolute left-0 top-[84px] h-px bg-gradient-to-r from-accent/70 to-accent/20"
               style={{ width: `${progress * 100}%` }}
             />
 
@@ -488,9 +499,38 @@ export function Experience() {
                     }}
                   >
                     <div className="pb-3 border-b border-white/[0.06]">
+                      {/* Org mark sits above the role, the way a masthead
+                          would. Entries without artwork fall back to the
+                          glyph rather than leaving a hole in the layout. */}
+                      <div className="h-9 mb-2.5 flex items-center">
+                        {entry.logo ? (
+                          <img
+                            src={entry.logo}
+                            alt={entry.org}
+                            loading="lazy"
+                            className="h-full w-auto max-w-[150px] object-contain object-left"
+                            style={{
+                              // These marks arrive in wildly different inks —
+                              // NJIT red, TCS full-rainbow, and the Mumbai
+                              // crest in solid black, which is invisible here.
+                              // Rendering them all as white silhouettes makes
+                              // the set consistent and keeps the page to its
+                              // single accent.
+                              filter:
+                                entry.logoFilter ??
+                                "brightness(0) invert(1) opacity(0.85)",
+                            }}
+                          />
+                        ) : isEducation ? (
+                          <GraduationCap className="h-5 w-5 text-zinc-600" />
+                        ) : (
+                          <Briefcase className="h-5 w-5 text-zinc-600" />
+                        )}
+                      </div>
+
                       {isEducation && (
                         <span
-                          className="block font-mono text-[10px] uppercase tracking-widest mb-1"
+                          className="block text-[10px] font-medium uppercase tracking-widest mb-1"
                           style={{ color: entry.accentColor }}
                         >
                           Education
@@ -499,13 +539,8 @@ export function Experience() {
                       <h3 className="text-base sm:text-lg font-semibold text-white leading-snug">
                         {entry.title}
                       </h3>
-                      <div className="mt-1 flex items-center gap-2 text-[13px] font-medium text-zinc-300">
-                        {isEducation ? (
-                          <GraduationCap className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
-                        ) : (
-                          <Briefcase className="h-3.5 w-3.5 shrink-0 text-zinc-500" />
-                        )}
-                        <span>{entry.org}</span>
+                      <div className="mt-1 text-[13px] font-medium text-zinc-300">
+                        {entry.org}
                       </div>
                       <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-zinc-500">
                         <span className="flex items-center gap-1">
@@ -564,7 +599,7 @@ export function Experience() {
 
                     {entry.activities && entry.activities.length > 0 && (
                       <div className="mt-4">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                        <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
                           Involvement
                         </span>
                         <ul className="mt-2 space-y-1.5">
@@ -588,14 +623,14 @@ export function Experience() {
 
                     {entry.courses && entry.courses.length > 0 && (
                       <div className="mt-4">
-                        <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+                        <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
                           Coursework
                         </span>
                         <div className="mt-2 flex flex-wrap gap-1.5">
                           {entry.courses.map((course) => (
                             <span
                               key={course}
-                              className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] font-mono text-[10px] leading-tight text-zinc-300"
+                              className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-[3px] text-[11px] leading-tight text-zinc-300"
                             >
                               {course}
                             </span>
@@ -610,7 +645,7 @@ export function Experience() {
                           {entry.skills.map((skill) => (
                             <span
                               key={skill}
-                              className="rounded-full border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 font-mono text-[10px] text-zinc-300"
+                              className="rounded-full border border-white/[0.07] bg-white/[0.03] px-2.5 py-0.5 text-[11px] text-zinc-300"
                             >
                               {skill}
                             </span>

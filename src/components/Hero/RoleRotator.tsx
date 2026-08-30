@@ -31,8 +31,8 @@ export function RoleRotator({
   return (
     <div className="inline-flex items-center gap-2.5">
       <span className="relative flex h-2 w-2">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60"></span>
-        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-60"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
       </span>
 
       <div className="h-6 sm:h-7 overflow-hidden flex items-center min-w-[200px] sm:min-w-[240px]">

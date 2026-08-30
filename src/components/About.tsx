@@ -86,13 +86,13 @@ export function About() {
       {/* Ambient wash, kept faint behind the copy */}
       <div
         aria-hidden="true"
-        className="absolute top-1/4 left-1/3 -translate-x-1/2 w-[620px] h-[440px] rounded-full blur-[160px] opacity-[0.12] bg-teal-400 pointer-events-none"
+        className="absolute top-1/4 left-1/3 -translate-x-1/2 w-[620px] h-[440px] rounded-full blur-[160px] opacity-[0.12] bg-accent pointer-events-none"
       />
 
       <div className="relative max-w-6xl mx-auto">
         {/* Section header */}
         <div className="space-y-2 mb-12">
-          {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+          {/* <span className="text-xs font-medium tracking-widest text-accent uppercase">
             01 &bull; About
           </span> */}
           <h2
@@ -114,7 +114,7 @@ export function About() {
           viewport={{ once: true, amount: 0.3 }}
           className="will-change-transform"
         >
-          {/* <span className="font-mono text-[10px] uppercase tracking-widest text-zinc-500">
+          {/* <span className="text-[10px] font-medium uppercase tracking-widest text-zinc-500">
             About Me
           </span> */}
           <p className="mt-4 max-w-3xl text-base sm:text-lg leading-relaxed text-zinc-300">

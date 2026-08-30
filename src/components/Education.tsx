@@ -39,7 +39,7 @@ export function Education() {
       <div className="max-w-4xl mx-auto">
         {/* Section Header */}
         <div className="space-y-2 mb-12">
-          {/* <span className="text-xs font-medium tracking-widest text-teal-400 uppercase">
+          {/* <span className="text-xs font-medium tracking-widest text-accent uppercase">
             05 &bull; Education & Certifications
           </span> */}
           <h2
@@ -62,7 +62,7 @@ export function Education() {
             >
               <div>
                 <div className="flex items-center justify-between gap-2 pb-3 border-b border-white/[0.06] mb-4">
-                  <span className="text-[11px] font-medium text-indigo-400">
+                  <span className="text-[11px] font-medium text-accent">
                     {cred.type}
                   </span>
                   <span className="text-xs text-zinc-500 font-mono">
@@ -82,7 +82,7 @@ export function Education() {
               </div>
 
               <div className="pt-4 mt-4 border-t border-white/[0.04] flex items-center gap-1.5 text-xs text-zinc-400">
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400/80" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-accent/80" />
                 <span>Verified Credential</span>
               </div>
             </div>

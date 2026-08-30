@@ -97,14 +97,14 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
             onClick={copyEmail}
             className="flex items-center gap-1 text-[11px] text-zinc-400 hover:text-white transition-colors"
           >
-            {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
+            {copied ? <Check className="h-3.5 w-3.5 text-accent" /> : <Copy className="h-3.5 w-3.5" />}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
         </div>
 
         {status === 'sent' ? (
-          <div className="p-6 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-center space-y-2">
-            <Check className="h-5 w-5 text-emerald-400 mx-auto" />
+          <div className="p-6 rounded-xl bg-accent/10 border border-accent/20 text-center space-y-2">
+            <Check className="h-5 w-5 text-accent mx-auto" />
             <h4 className="text-sm font-semibold text-white">Thank you!</h4>
             <p className="text-xs text-zinc-300">Shriya Sharma will get back to you shortly.</p>
           </div>
@@ -129,7 +129,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Your Name"
-                className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none"
+                className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none"
               />
             </div>
             <div>
@@ -140,7 +140,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="you@company.com"
-                className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none"
+                className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none"
               />
             </div>
             <div>
@@ -151,7 +151,7 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                 placeholder="How can Shriya assist your team?"
-                className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-indigo-400/60 focus:outline-none resize-none"
+                className="w-full rounded-xl border border-white/[0.08] bg-black/40 px-3 py-2 text-xs text-white placeholder-zinc-600 focus:border-accent/60 focus:outline-none resize-none"
               />
             </div>
             {status === 'error' && (
