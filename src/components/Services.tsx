@@ -190,13 +190,13 @@ export function Services({ onContactClick }: ServicesProps) {
                 {/* <span>Services</span> */}
               </div>
               <h2
-                className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-tight"
+                className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
                 style={{
                   fontFamily:
                     "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
                 }}
               >
-                Where I put that to work
+                Services & Expertise
               </h2>
             </div>
 
@@ -208,7 +208,7 @@ export function Services({ onContactClick }: ServicesProps) {
         </div>
 
         {/* Auto-scrolling rail */}
-        <Marquee speed={42}>
+        <Marquee speed={42} showControls step={347} controlsLabel="services">
           {SERVICES.map((service) => {
             const Icon = SERVICE_ICONS[service.id] ?? Layers;
             const hue = solidHue(service.ambientGlow);

@@ -249,7 +249,7 @@ export function Skills() {
                 <span>04 &bull; Technical Repertoire</span> */}
               </div>
               <h2
-                className="font-serif text-4xl sm:text-5xl md:text-6xl font-normal tracking-tight text-white leading-tight"
+                className="font-serif text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-white"
                 style={{
                   fontFamily:
                     "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
