@@ -128,7 +128,11 @@ export function Hero({ onContactClick }: HeroProps) {
               without any 3D — the outer two counter-rotate against the inner. */}
           <motion.div
             className="absolute inset-0 rounded-full border border-teal-400/20"
-            style={{ maskImage: "linear-gradient(200deg, black 20%, transparent 78%)", WebkitMaskImage: "linear-gradient(200deg, black 20%, transparent 78%)" }}
+            style={{
+              maskImage: "linear-gradient(200deg, black 20%, transparent 78%)",
+              WebkitMaskImage:
+                "linear-gradient(200deg, black 20%, transparent 78%)",
+            }}
             animate={{ rotate: 360 }}
             transition={{ duration: 46, ease: "linear", repeat: Infinity }}
           />
@@ -139,7 +143,11 @@ export function Hero({ onContactClick }: HeroProps) {
           />
           <motion.div
             className="absolute inset-[27%] rounded-full border border-indigo-300/20"
-            style={{ maskImage: "linear-gradient(20deg, black 25%, transparent 85%)", WebkitMaskImage: "linear-gradient(20deg, black 25%, transparent 85%)" }}
+            style={{
+              maskImage: "linear-gradient(20deg, black 25%, transparent 85%)",
+              WebkitMaskImage:
+                "linear-gradient(20deg, black 25%, transparent 85%)",
+            }}
             animate={{ rotate: 360 }}
             transition={{ duration: 22, ease: "linear", repeat: Infinity }}
           />
@@ -159,7 +167,6 @@ export function Hero({ onContactClick }: HeroProps) {
           >
             <span className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 h-1.5 w-1.5 rounded-full bg-indigo-200/90 shadow-[0_0_10px_rgba(165,180,252,0.8)]" />
           </motion.div>
-
         </motion.div>
 
         {/* Cinematic Headline (Matching Yaroslav: "I'm Shriya" + "WEB DEVELOPER") */}
@@ -178,9 +185,9 @@ export function Hero({ onContactClick }: HeroProps) {
                 "'Instrument Serif', 'Cormorant Garamond', Georgia, serif",
             }}
           >
-            I'm{" "}
+            {" "}
             <span className="italic font-normal tracking-wide text-zinc-100">
-              Shriya
+              Shriya Sharma
             </span>
           </h1>
 
