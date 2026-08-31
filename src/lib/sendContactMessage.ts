@@ -15,7 +15,7 @@
 
 const ENDPOINT = "https://api.web3forms.com/submit";
 
-const ACCESS_KEY = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as
+const ACCESS_KEY = import.meta.env.WEB3FORMS_ACCESS_KEY as
   | string
   | undefined;
 
