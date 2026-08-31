@@ -10,6 +10,7 @@ import { Skills } from "./components/Skills";
 import { Contact } from "./components/Contact";
 import { Footer } from "./components/Footer";
 import { ContactModal } from "./components/ContactModal";
+import { SocialDock } from "./components/SocialDock";
 
 export default function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -39,6 +40,9 @@ export default function App() {
         <Skills />
         <Contact />
       </main>
+
+      {/* Floating social dock, bottom-right */}
+      <SocialDock />
 
       {/* Minimal Footer */}
       <Footer />

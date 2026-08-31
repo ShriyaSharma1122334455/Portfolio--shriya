@@ -149,7 +149,7 @@ export function Contact() {
                 >
                   <div className="flex items-center gap-2.5">
                     <Linkedin className="h-4 w-4" />
-                    <span>linkedin.com/in/shriyasharma</span>
+                    <span>linkedin.com/in/shriyasharmacs26/</span>
                   </div>
                   <ArrowUpRight className="h-3.5 w-3.5 text-zinc-500" />
                 </a>
