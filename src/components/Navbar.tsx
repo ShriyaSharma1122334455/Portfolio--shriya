@@ -59,12 +59,12 @@ export function Navbar({ onContactClick }: NavbarProps) {
               ))}
             </nav>
 
-            <button
+            {/* <button
               onClick={onContactClick}
               className="rounded-full bg-white/10 hover:bg-white text-zinc-200 hover:text-black border border-white/15 hover:border-white px-4 py-1.5 text-xs font-medium transition-all duration-300 cursor-pointer"
             >
               Contact
-            </button>
+            </button> */}
           </div>
 
           {/* Minimal 2-Line Hamburger Menu Icon (Exact yaros.me style) */}
@@ -104,7 +104,7 @@ export function Navbar({ onContactClick }: NavbarProps) {
                 {link.label}
               </a>
             ))}
-            <button
+            {/* <button
               onClick={() => {
                 setMobileOpen(false);
                 onContactClick();
@@ -112,7 +112,7 @@ export function Navbar({ onContactClick }: NavbarProps) {
               className="mt-6 rounded-full bg-white text-black px-8 py-3 text-sm font-semibold tracking-wide hover:bg-zinc-200 transition-colors"
             >
               Get in Touch
-            </button>
+            </button> */}
           </nav>
         </div>
       )}

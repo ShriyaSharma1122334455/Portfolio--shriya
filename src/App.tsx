@@ -16,7 +16,7 @@ export default function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#070708] text-[#f4f4f5] selection:bg-white selection:text-black">
+    <div className="min-h-screen bg-[#070708] text-[#f4f4f5] ">
       {/* Desktop-only inertial Custom Cursor */}
       <CustomCursor />
 

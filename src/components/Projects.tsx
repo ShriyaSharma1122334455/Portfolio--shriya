@@ -68,7 +68,7 @@ const projects: Project[] = [
     description:
       "A multi-agent decision system where specialized agents analyze procurement scenarios and generate explainable recommendations. Designed the backend architecture on DynamoDB and integrated AWS Bedrock to power AI-driven retrieval and decision workflows.",
     impact: "Multi-Agent Architecture via LangGraph + AWS Bedrock",
-    tech: ["Python/Node.js", "LangGraph", "DynamoDB", "AWS Bedrock", "React"],
+    tech: ["Python", "LangGraph", "DynamoDB", "AWS Bedrock", "React"],
     githubUrl: "",
   },
   {

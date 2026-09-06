@@ -113,3 +113,8 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+::selection {
+  background-color: rgba(96, 130, 182, 0.45);
+  color: #ffffff;
+}
