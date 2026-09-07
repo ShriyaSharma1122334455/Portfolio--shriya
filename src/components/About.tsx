@@ -30,19 +30,20 @@ const CREDENTIALS: Credential[] = [
     issuer: "Google",
     // Full-colour mark already reads on dark; leave it alone.
   },
-  {
-    name: "NJIT Entrepreneurial Experience Badge",
-    logo: njitLogo,
-    issuer: "New Jersey Institute of Technology",
-    // Red on transparent — visible already, just a touch brighter.
-    filter: "brightness(1.12)",
-  },
+
   {
     name: "NSF I-Corps — North Eastern Region",
     logo: nsfLogo,
     issuer: "National Science Foundation",
     // Blue/gold lockup with darker blue type; lift without washing it out.
     filter: "brightness(1.35) saturate(1.15)",
+  },
+  {
+    name: "NJIT Entrepreneurial Experience Badge",
+    logo: njitLogo,
+    issuer: "New Jersey Institute of Technology",
+    // Red on transparent — visible already, just a touch brighter.
+    filter: "brightness(1.12)",
   },
 ];
 
